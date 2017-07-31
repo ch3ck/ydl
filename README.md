@@ -13,7 +13,7 @@ $ git clone htps://github.com/Ch3ck/ytd
 $ go get -u google.golang.org/api/youtube/v3
 $ go get -u golang.org/x/oauth2/...
 
-``
+```
 
 ## Build
 
@@ -48,7 +48,7 @@ Start by starring and Forking this repository. Follow the basic instruction in t
 
 YTD is licensed under [The MIT Licence](LICENSE).
 
-##Author
+## Author
 
 This project was created and maintained by [Nyah Check](https://twitter.com/nyah_check). Please feel free to reach out, I could always use your help or advice :-)
 
