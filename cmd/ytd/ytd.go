@@ -23,9 +23,15 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-const missingClientSecretsMessage = `
-Please configure OAuth 2.0
-`
+const (
+	//Failure to OAuth with Youtube API
+	missingClientSecretsMessage = `Please configure OAuth 2.0`
+	
+	//BANNER for ytd which prints the help info
+	BANNER 
+	//VERSION which prints the ytd version.
+)
+	
 
 // getClient uses a Context and Config to retrieve a Token
 // then generate a Client. It returns the generated Client.
@@ -140,4 +146,14 @@ func main() {
 	handleError(err, "Error creating YouTube client")
 
 	channelsListByUsername(service, "snippet,contentDetails,statistics", "GoogleDevelopers")
+}
+
+func usageAndExit(message string, exitCode int) {
+	if message != "" {
+		fmt.Fprintf(os.Stderr, message)
+		fmt.Fprintf(os.Stderr, "\n\n")
+	}
+	flag.Usage()
+	fmt.Fprintf(os.Stderr, "\n")
+	os.Exit(exitCode)
 }
