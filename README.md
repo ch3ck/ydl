@@ -1,5 +1,5 @@
 # ytd
-A Go Application for downloading Youtube videos and converting to other formats[FLV, mp3]. To detailed design architecture. Take a look at the [Design Document](ARCHITECTURE) markdown.
+`ytd` is Go application for downloading Youtube videos and converting to other formats(flv, mp3). To understand the design take a look at the  [Design Document](ARCHITECTURE.md).
 
 ```
 ytd
@@ -82,18 +82,12 @@ Running `ytd` without any arguments will prompt for link
 
 ## Contributing
 
-Start by starring and Forking this repository. Follow the basic instruction in the [CONTRIBUTING](CONTRIBUTING) file.
+Start by starring and Forking this repository. Follow the basic instruction in the [CONTRIBUTING](CONTRIBUTING.md) file.
 
 ## Licence
 
-YTD is licensed under [The MIT Licence](LICENSE).
+YTD is licensed under [The MIT Licence](LICENSE.md).
 
 ## Author
 
 This project was created and maintained by [Nyah Check](https://twitter.com/nyah_check). Please feel free to reach out, I could always use your help or advice :-)
-
-
-## Notes
-
-* Add vendoring for required Go deps.(*govendor*  or *gvt* tools)
-
