@@ -55,8 +55,20 @@ $ make
 
 On a Linux or OSX system
 ```
-$ ./ytd <link to youtube video>
+$ ytd -h
+
+  -s or --search 
+        searches for any matching videos on Youtube
+  -k or --key
+        Youtube API token
+  -v or --version    print version and exit (shorthand)
+		prints ytd version and exits
+		
+$ ytd <link>
+  searches for youtube video on that link and downloads
 ```
+Running `ytd` without any arguments will prompt for link
+
 
 ## Roadmap
 
@@ -83,5 +95,5 @@ This project was created and maintained by [Nyah Check](https://twitter.com/nyah
 
 ## Notes
 
-* Add vendoring for required Go deps.
+* Add vendoring for required Go deps.(*govendor*  or *gvt* tools)
 
