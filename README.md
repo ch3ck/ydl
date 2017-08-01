@@ -1,5 +1,5 @@
 # ytd
-A Go Application for downloading Youtube videos and mp3 
+A Go Application for downloading Youtube videos and converting to other formats[FLV, mp3]. To detailed design architecture. Take a look at the [Design Document](ARCHITECTURE) markdown.
 
 
 ## Pre requisites
@@ -12,6 +12,7 @@ Clone GIT repo:
 $ git clone htps://github.com/Ch3ck/ytd
 $ go get -u google.golang.org/api/youtube/v3
 $ go get -u golang.org/x/oauth2/...
+$ go get -u github.com/github.com/Sirupsen/logrus/...
 
 ```
 
@@ -52,4 +53,8 @@ YTD is licensed under [The MIT Licence](LICENSE).
 
 This project was created and maintained by [Nyah Check](https://twitter.com/nyah_check). Please feel free to reach out, I could always use your help or advice :-)
 
+
+## Notes
+
+* Add vendoring for required Go deps.
 
