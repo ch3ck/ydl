@@ -18,12 +18,9 @@ import (
 	"path/filepath"
 	"runtime"
 
-	//"code.google.com/p/goauth2/oauth"
 	"github.com/Sirupsen/logrus"
-	"github.com/golang/oauth2"
-	"github.com/golang/oauth2/google"
-	//"golang.org/x/oauth2"
-	//"golang.org/x/oauth2/google"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"google.golang.org/api/youtube/v3"
 )
 
