@@ -1,9 +1,10 @@
 // Copyright 2017 YTD Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
-// Download Youtube video data as mp3
 
-package ytdata
+// apidata: Processes requests to Youtube API, downloads video streams
+
+package api
 
 import (
 	"flag"
@@ -12,11 +13,11 @@ import (
 	"os"
 	"strings"
 
-	"code.google.com/p/google-api-go-client/youtube/v3"
+	"google.golang.org/api/youtube/v3"
 )
 
 //Youtube Downloader Data file.
-type Ytdd struct {
+type ApiData struct {
 	FileName    string
 	Title       string
 	description string
@@ -34,6 +35,20 @@ var (
 	keywords    = flag.String("keywords", "", "Comma separated list of video keywords")
 	privacy     = flag.String("privacy", "unlisted", "Video privacy status")
 )
+
+
+//Searches and returns channel lists by username.
+func channelsListByUsername(service *youtube.Service, part string, forUsername string) {
+	call := service.Channels.List(part)
+	call = call.ForUsername(forUsername)
+	response, err := call.Do()
+	handleError(err, "")
+	fmt.Println(fmt.Sprintf("This channel's ID is %s. Its title is '%s', "+
+		"and it has %d views.",
+		response.Items[0].Id,
+		response.Items[0].Snippet.Title,
+		response.Items[0].Statistics.ViewCount))
+}
 
 func main() {
 	flag.Parse()

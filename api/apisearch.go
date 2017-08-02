@@ -1,9 +1,10 @@
 // Copyright 2017 YTD Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
-// Search Youtube API for Video Data
 
-package ytdata
+// apisearch: Performs search queries on Youtube and returns results.
+
+package api
 
 import (
 	"flag"
