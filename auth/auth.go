@@ -18,10 +18,14 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"code.google.com/p/goauth2/oauth"
+	//"code.google.com/p/goauth2/oauth"
+	"github.com/Sirupsen/logrus"
+	"github.com/golang/oauth2"
+	"github.com/golang/oauth2/google"
+	//"golang.org/x/oauth2"
+	//"golang.org/x/oauth2/google"
+	"google.golang.org/api/youtube/v3"
 )
-
-const missingClientSecretsMessage = ` OAuth 2.0 not configured `
 
 var (
 	clientSecretsFile = flag.String("secrets", "client_secrets.json", "Client Secrets configuration")
@@ -44,22 +48,76 @@ type Config struct {
 	Web       ClientConfig `json:"web"`
 }
 
-// openURL opens a browser window to the specified location.
-// This code originally appeared at:
-//   http://stackoverflow.com/questions/10377243/how-can-i-launch-a-process-that-is-not-a-file-in-go
-func openURL(url string) error {
-	var err error
-	switch runtime.GOOS {
-	case "linux":
-		err = exec.Command("xdg-open", url).Start()
-	case "windows":
-		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", "http://localhost:4001/").Start()
-	case "darwin":
-		err = exec.Command("open", url).Start()
-	default:
-		err = fmt.Errorf("Cannot open URL %s on this platform", url)
+// getClient uses a Context and Config to retrieve a Token
+// then generate a Client. It returns the generated Client.
+func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
+	cacheFile, err := tokenCacheFile()
+	if err != nil {
+		log.Fatalf("Unable to get path to cached credential file. %v", err)
 	}
-	return err
+	tok, err := tokenFromFile(cacheFile)
+	if err != nil {
+		tok = getTokenFromWeb(config)
+		saveToken(cacheFile, tok)
+	}
+	return config.Client(ctx, tok)
+}
+
+// getTokenFromWeb uses Config to request a Token.
+// It returns the retrieved Token.
+func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
+	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	fmt.Printf("Go to the following link in your browser then type the "+
+		"authorization code: \n%v\n", authURL)
+
+	var code string
+	if _, err := fmt.Scan(&code); err != nil {
+		log.Fatalf("Unable to read authorization code %v", err)
+	}
+
+	tok, err := config.Exchange(oauth2.NoContext, code)
+	if err != nil {
+		log.Fatalf("Unable to retrieve token from web %v", err)
+	}
+	return tok
+}
+
+// tokenCacheFile generates credential file path/filename.
+// It returns the generated credential path/filename.
+func tokenCacheFile() (string, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	tokenCacheDir := filepath.Join(usr.HomeDir, ".credentials")
+	os.MkdirAll(tokenCacheDir, 0700)
+	return filepath.Join(tokenCacheDir,
+		url.QueryEscape("ytd-auth.json")), err
+}
+
+// tokenFromFile retrieves a Token from a given file path.
+// It returns the retrieved Token and any read error encountered.
+func tokenFromFile(file string) (*oauth2.Token, error) {
+	f, err := os.Open(file)
+	if err != nil {
+		return nil, err
+	}
+	t := &oauth2.Token{}
+	err = json.NewDecoder(f).Decode(t)
+	defer f.Close()
+	return t, err
+}
+
+// saveToken uses a file path to create a file and store the
+// token in it.
+func saveToken(file string, token *oauth2.Token) {
+	fmt.Printf("Saving credential file to: %s\n", file)
+	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		log.Fatalf("Unable to cache oauth token: %v", err)
+	}
+	defer f.Close()
+	json.NewEncoder(f).Encode(token)
 }
 
 // readConfig reads the configuration from clientSecretsFile.
@@ -96,7 +154,7 @@ func readConfig(scope string) (*oauth.Config, error) {
 		TokenURL:     cfg.Installed.TokenURI,
 		RedirectURL:  redirectUri,
 		TokenCache:   oauth.CacheFile(*cacheFile),
-		// Get a refresh token so we can use the access token indefinitely
+		// Get a refresh token whose access can be used indefinitely
 		AccessType: "offline",
 		// If we want a refresh token, we must set this attribute
 		// to force an approval prompt or the code won't work.
@@ -104,76 +162,23 @@ func readConfig(scope string) (*oauth.Config, error) {
 	}, nil
 }
 
-// startWebServer starts a web server that listens on http://localhost:8080.
-// The webserver waits for an oauth code in the three-legged auth flow.
-func startWebServer() (codeCh chan string, err error) {
-	listener, err := net.Listen("tcp", "localhost:8080")
-	if err != nil {
-		return nil, err
-	}
-	codeCh = make(chan string)
-	go http.Serve(listener, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		code := r.FormValue("code")
-		codeCh <- code // send code to OAuth flow
-		listener.Close()
-		w.Header().Set("Content-Type", "text/plain")
-		fmt.Fprintf(w, "Received code: %v\r\nYou can now safely close this browser window.", code)
-	}))
+func CreateYoutubeService(ctx context.Context) (*youtube.Service, err) {
 
-	return codeCh, nil
+	config, err := readConfig("read")
+	HandleError(err, "Error reading OAuth config")
+
+	client := getClient(ctx, config)
+	service, err := youtube.New(client)
+	HandleError(err, "Error creating YouTube client")
+
+	return service, err
 }
 
-// buildOAuthHTTPClient takes the user through the three-legged OAuth flow.
-// It opens a browser in the native OS or outputs a URL, then blocks until
-// the redirect completes to the /oauth2callback URI.
-// It returns an instance of an HTTP client that can be passed to the
-// constructor of the YouTube client.
-func buildOAuthHTTPClient(scope string) (*http.Client, error) {
-	config, err := readConfig(scope)
-	if err != nil {
-		msg := fmt.Sprintf("Cannot read configuration file: %v", err)
-		return nil, errors.New(msg)
+func HandleError(err error, message string) {
+	if message == "" {
+		message = "Error making API call"
 	}
-
-	transport := &oauth.Transport{Config: config}
-
-	// Try to read the token from the cache file.
-	// If an error occurs, do the three-legged OAuth flow because
-	// the token is invalid or doesn't exist.
-	token, err := config.TokenCache.Token()
 	if err != nil {
-		// Start web server.
-		// This is how this program receives the authorization code
-		// when the browser redirects.
-		codeCh, err := startWebServer()
-		if err != nil {
-			return nil, err
-		}
-
-		// Open url in browser
-		url := config.AuthCodeURL("")
-		err = openURL(url)
-		if err != nil {
-			fmt.Println("Visit the URL below to get a code.",
-				" This program will pause until the site is visted.")
-		} else {
-			fmt.Println("Your browser has been opened to an authorization URL.",
-				" This program will resume once authorization has been provided.\n")
-		}
-		fmt.Println(url)
-
-		// Wait for the web server to get the code.
-		code := <-codeCh
-
-		// This code caches the authorization code on the local
-		// filesystem, if necessary, as long as the TokenCache
-		// attribute in the config is set.
-		token, err = transport.Exchange(code)
-		if err != nil {
-			return nil, err
-		}
+		logrus.Fatalf(message+": %v", err.Error())
 	}
-
-	transport.Token = token
-	return transport.Client(), nil
 }
