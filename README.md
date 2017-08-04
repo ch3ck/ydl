@@ -57,8 +57,8 @@ On a Linux or OSX system
 ```
 $ ytd -h
 
-  -s or --search 
-        searches for any matching videos on Youtube
+  -q or --query
+        Youtube search query
   -k or --key
         Youtube API token
   -v or --version    print version and exit (shorthand)
