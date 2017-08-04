@@ -6,7 +6,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	//"io/ioutil"
 	"log"
 	"net/http"
 
@@ -14,7 +14,7 @@ import (
 	youtube "google.golang.org/api/youtube/v3"
 )
 
-const developerKey = "vqNWDovin1e8vR24HNdxF0_G"
+const developerKey = "AIzaSyCZSy5sOGsZrOrI0vLtowf_VJ-tl_USzNE"
 
 func main() {
 
@@ -28,20 +28,15 @@ func main() {
 	}
 
 	// Make GET request to Youtube API.
-	call := service.Videos.List("snippet, contentDetails, fileDetails,liveStreamingDetails")
+	call := service.Videos.List("snippet, recordingDetails")
+	call.Id("Ks-_Mh1QhMc")
 	resp, err := call.Do()
 	if err != nil {
-		log.Fatalf("Error making search API call: %v", err)
+		log.Fatalf("Error getting Video response: %v", err)
 	}
-	for _, item := range response.Items {
-                fmt.Println(item.Id, ": ", item.Snippet.Title)
-        }
-	body, err := ioutil.ReadAll(resp)
-	if err != nil {
-		fmt.Printf("Error reading output")
-		return
-	}
-
-	fmt.Printf("\nGot %d bytes answer", len(body))
+	for cnt, item := range resp.Items {
+                fmt.Printf("\n %d: %+v\n", cnt, item)
+    }
+    
 	return
 }
