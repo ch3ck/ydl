@@ -7,11 +7,13 @@
 package api
 
 import (
-	"flag"
 	"fmt"
-	"log"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"strings"
+	
+	"github.com/Sirupsen/logrus"
 
 	"google.golang.org/api/youtube/v3"
 )
@@ -27,74 +29,60 @@ type ApiData struct {
 	DataStream  []byte
 }
 
-var (
-	filename    = flag.String("filename", "", "Name of video file to upload")
-	title       = flag.String("title", "Test Title", "Video title")
-	description = flag.String("description", "Test Description", "Video description")
-	category    = flag.String("category", "22", "Video category")
-	keywords    = flag.String("keywords", "", "Comma separated list of video keywords")
-	privacy     = flag.String("privacy", "unlisted", "Video privacy status")
-)
 
+//gets the Video ID from youtube url
+func getVideoId(url string) ( string, error) {
 
-//Searches and returns channel lists by username.
-func channelsListByUsername(service *youtube.Service, part string, forUsername string) {
-	call := service.Channels.List(part)
-	call = call.ForUsername(forUsername)
-	response, err := call.Do()
-	handleError(err, "")
-	fmt.Println(fmt.Sprintf("This channel's ID is %s. Its title is '%s', "+
-		"and it has %d views.",
-		response.Items[0].Id,
-		response.Items[0].Snippet.Title,
-		response.Items[0].Statistics.ViewCount))
+	s := strings.Split(url, "?v="))
+	s = strings.Split(s[1], "&")
+	if len(s[0]) == 0 {
+		s[0], error.New("Empty string)
+	}
+	
+	return s[0], nil
 }
 
-func main() {
-	flag.Parse()
 
-	if *filename == "" {
-		log.Fatalf("You must provide a filename of a video file to upload")
-	}
-
-	client, err := buildOAuthHTTPClient(youtube.YoutubeUploadScope)
-	if err != nil {
-		log.Fatalf("Error building OAuth client: %v", err)
-	}
-
-	service, err := youtube.New(client)
-	if err != nil {
-		log.Fatalf("Error creating YouTube client: %v", err)
-	}
-
-	upload := &youtube.Video{
-		Snippet: &youtube.VideoSnippet{
-			Title:       *title,
-			Description: *description,
-			CategoryId:  *category,
-		},
-		Status: &youtube.VideoStatus{PrivacyStatus: *privacy},
-	}
-
-	// The API returns a 400 Bad Request response if tags is an empty string.
-	if strings.Trim(*keywords, "") != "" {
-		upload.Snippet.Tags = strings.Split(*keywords, ",")
-	}
-
-	call := service.Videos.Insert("snippet,status", upload)
-
-	file, err := os.Open(*filename)
-	defer file.Close()
-	if err != nil {
-		log.Fatalf("Error opening %v: %v", *filename, err)
-	}
-
-	response, err := call.Media(file).Do()
-	if err != nil {
-		log.Fatalf("Error making YouTube API call: %v", err)
-	}
-	fmt.Printf("Upload successful! Video ID: %v\n", response.Id)
+func printVideosListResults(response *youtube.VideoListResponse) {
+        for _, item := range response.Items {
+                fmt.Println(item.Id, ": ", item.Snippet.Title)
+        }
 }
+
+//Prints the video list by ID.
+func videosListById(service *youtube.Service, part string, id string) {
+        call := service.Videos.List(part)
+        if id != "" {
+                call = call.Id(id)
+        }
+        response, err := call.Do()
+        handleError(err, "")
+        printVideosListResults(response)
+}
+
+videosListById(service, "snippet,contentDetails,statistics", "Ks-_Mh1QhMc")
+
+
+
+
+func APIGetVideoStream(service youtube.Service, url string)(videoData []byte, err error) {
+	
+	//Gets video Id
+	id , err := getVideoId(url)
+	auth.HandleError(err, "Invalid youtube URL.")
+	
+	//Get Video response stream
+	videosListById(service, "snippet,contentDetails,liveStreamingDetails, fileDetails", id)//fileDetails part not permitted.
+	
+	//Get Data stream from video response
+	
+	
+	//Download data stream to memory.
+	
+	//convert video file to flv or mp3
+
+
+
 
 //retrieve uploads
 func main() {
@@ -161,64 +149,52 @@ func main() {
 	}
 }
 
-var (
-	query      = flag.String("query", "Google", "Search term")
-	maxResults = flag.Int64("max-results", 25, "Max YouTube results")
-)
+func ApiDownloadVideo() {
 
-const developerKey = "YOUR DEVELOPER KEY"
 
-func main() {
+}main() {
 	flag.Parse()
 
-	client := &http.Client{
-		Transport: &transport.APIKey{Key: developerKey},
+	if *filename == "" {
+		log.Fatalf("You must provide a filename of a video file to upload")
+	}
+
+	client, err := buildOAuthHTTPClient(youtube.YoutubeUploadScope)
+	if err != nil {
+		log.Fatalf("Error building OAuth client: %v", err)
 	}
 
 	service, err := youtube.New(client)
 	if err != nil {
-		log.Fatalf("Error creating new YouTube client: %v", err)
+		log.Fatalf("Error creating YouTube client: %v", err)
 	}
 
-	// Make the API call to YouTube.
-	call := service.Search.List("id,snippet").
-		Q(*query).
-		MaxResults(*maxResults)
-	response, err := call.Do()
+	upload := &youtube.Video{
+		Snippet: &youtube.VideoSnippet{
+			Title:       *title,
+			Description: *description,
+			CategoryId:  *category,
+		},
+		Status: &youtube.VideoStatus{PrivacyStatus: *privacy},
+	}
+
+	// The API returns a 400 Bad Request response if tags is an empty string.
+	if strings.Trim(*keywords, "") != "" {
+		upload.Snippet.Tags = strings.Split(*keywords, ",")
+	}
+
+	call := service.Videos.Insert("snippet,status", upload)
+
+	file, err := os.Open(*filename)
+	defer file.Close()
 	if err != nil {
-		log.Fatalf("Error making search API call: %v", err)
+		log.Fatalf("Error opening %v: %v", *filename, err)
 	}
 
-	// Group video, channel, and playlist results in separate lists.
-	videos := make(map[string]string)
-	channels := make(map[string]string)
-	playlists := make(map[string]string)
-
-	// Iterate through each item and add it to the correct list.
-	for _, item := range response.Items {
-		switch item.Id.Kind {
-		case "youtube#video":
-			videos[item.Id.VideoId] = item.Snippet.Title
-		case "youtube#channel":
-			channels[item.Id.ChannelId] = item.Snippet.Title
-		case "youtube#playlist":
-			playlists[item.Id.PlaylistId] = item.Snippet.Title
-		}
+	response, err := call.Media(file).Do()
+	if err != nil {
+		log.Fatalf("Error making YouTube API call: %v", err)
 	}
-
-	printIDs("Videos", videos)
-	printIDs("Channels", channels)
-	printIDs("Playlists", playlists)
+	fmt.Printf("Upload successful! Video ID: %v\n", response.Id)
 }
 
-// Print the ID and title of each result in a list as well as a name that
-// identifies the list. For example, print the word section name "Videos"
-// above a list of video search results, followed by the video ID and title
-// of each matching video.
-func printIDs(sectionName string, matches map[string]string) {
-	fmt.Printf("%v:\n", sectionName)
-	for id, title := range matches {
-		fmt.Printf("[%v] %v\n", id, title)
-	}
-	fmt.Printf("\n\n")
-}
