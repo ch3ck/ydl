@@ -6,7 +6,10 @@
 
 package api
 
-import (
+import (	
+	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -18,7 +21,23 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
+
+//const variables
+const (
+	
+	//Video extractor
+	videoExtractor = "http://youtube.com/get_video_info?video_id="
+)
+
 //Youtube Downloader Data file.
+type RawVideoData struct {
+	Title     				string `json:"title"`
+	Author     				string `json:"author`
+	Status                 	string `json:"status"`
+	URLEncodedFmtStreamMap 	map[string][]string `json:"url_encoded_fmt_stream_map"`
+}
+		
+}
 type ApiData struct {
 	FileName    string
 	Title       string
@@ -33,14 +52,15 @@ type ApiData struct {
 //gets the Video ID from youtube url
 func getVideoId(url string) ( string, error) {
 
-	s := strings.Split(url, "?v="))
+	s := strings.Split(url, "?v=")
 	s = strings.Split(s[1], "&")
 	if len(s[0]) == 0 {
-		s[0], error.New("Empty string)
+		return s[0], errors.New("Empty string")
 	}
 	
 	return s[0], nil
 }
+
 
 
 func printVideosListResults(response *youtube.VideoListResponse) {
@@ -60,141 +80,148 @@ func videosListById(service *youtube.Service, part string, id string) {
         printVideosListResults(response)
 }
 
-videosListById(service, "snippet,contentDetails,statistics", "Ks-_Mh1QhMc")
 
 
-
-
+//Gets Video Data from Youtube URL
 func APIGetVideoStream(service youtube.Service, url string)(videoData []byte, err error) {
+
+	videoStream := new(RawVideoData)
 	
 	//Gets video Id
 	id , err := getVideoId(url)
 	auth.HandleError(err, "Invalid youtube URL.")
 	
-	//Get Video response stream
-	videosListById(service, "snippet,contentDetails,liveStreamingDetails, fileDetails", id)//fileDetails part not permitted.
+	//Get Video Data stream
+	videoUrl := videoExtractor + id
+	resp, er := http.Get(videoUrl)
+	auth.HandleError(er, "Error in GET request)
+	defer resp.Body.Close()
+	out, e := ioutil.ReadAll(resp.Body)
+	auth.HandleError(e, "Error reading video data")
+	if err = json.Unmarshal(out, &a.output); err != nil {
+		logrus.Errorf("Error JSON Unmarshall: %v", err)
+	}
+	//Extract Video information.
+	videoInfo := videosListById(service, "snippet,contentDetails", id)//fileDetails part not permitted.
 	
 	//Get Data stream from video response
-	
+	if err = json.Unmarshal(out, &videoStream); err != nil {
+		logrus.Errorf("Error JSON Unmarshall: %v", err)
+	}
 	
 	//Download data stream to memory.
 	
 	//convert video file to flv or mp3
 
 
-
-
-//retrieve uploads
-func main() {
-	flag.Parse()
-
-	client, err := buildOAuthHTTPClient(youtube.YoutubeReadonlyScope)
-	if err != nil {
-		log.Fatalf("Error building OAuth client: %v", err)
-	}
-
-	service, err := youtube.New(client)
-	if err != nil {
-		log.Fatalf("Error creating YouTube client: %v", err)
-	}
-
-	// Start making YouTube API calls.
-	// Call the channels.list method. Set the mine parameter to true to
-	// retrieve the playlist ID for uploads to the authenticated user's
-	// channel.
-	call := service.Channels.List("contentDetails").Mine(true)
-
-	response, err := call.Do()
-	if err != nil {
-		// The channels.list method call returned an error.
-		log.Fatalf("Error making API call to list channels: %v", err.Error())
-	}
-
-	for _, channel := range response.Items {
-		playlistId := channel.ContentDetails.RelatedPlaylists.Uploads
-		// Print the playlist ID for the list of uploaded videos.
-		fmt.Printf("Videos in list %s\r\n", playlistId)
-
-		nextPageToken := ""
-		for {
-			// Call the playlistItems.list method to retrieve the
-			// list of uploaded videos. Each request retrieves 50
-			// videos until all videos have been retrieved.
-			playlistCall := service.PlaylistItems.List("snippet").
-				PlaylistId(playlistId).
-				MaxResults(50).
-				PageToken(nextPageToken)
-
-			playlistResponse, err := playlistCall.Do()
-
-			if err != nil {
-				// The playlistItems.list method call returned an error.
-				log.Fatalf("Error fetching playlist items: %v", err.Error())
-			}
-
-			for _, playlistItem := range playlistResponse.Items {
-				title := playlistItem.Snippet.Title
-				videoId := playlistItem.Snippet.ResourceId.VideoId
-				fmt.Printf("%v, (%v)\r\n", title, videoId)
-			}
-
-			// Set the token to retrieve the next page of results
-			// or exit the loop if all results have been retrieved.
-			nextPageToken = playlistResponse.NextPageToken
-			if nextPageToken == "" {
-				break
-			}
-			fmt.Println()
-		}
-	}
 }
+
+
 
 func ApiDownloadVideo() {
 
 
-}main() {
-	flag.Parse()
-
-	if *filename == "" {
-		log.Fatalf("You must provide a filename of a video file to upload")
-	}
-
-	client, err := buildOAuthHTTPClient(youtube.YoutubeUploadScope)
-	if err != nil {
-		log.Fatalf("Error building OAuth client: %v", err)
-	}
-
-	service, err := youtube.New(client)
-	if err != nil {
-		log.Fatalf("Error creating YouTube client: %v", err)
-	}
-
-	upload := &youtube.Video{
-		Snippet: &youtube.VideoSnippet{
-			Title:       *title,
-			Description: *description,
-			CategoryId:  *category,
-		},
-		Status: &youtube.VideoStatus{PrivacyStatus: *privacy},
-	}
-
-	// The API returns a 400 Bad Request response if tags is an empty string.
-	if strings.Trim(*keywords, "") != "" {
-		upload.Snippet.Tags = strings.Split(*keywords, ",")
-	}
-
-	call := service.Videos.Insert("snippet,status", upload)
-
-	file, err := os.Open(*filename)
-	defer file.Close()
-	if err != nil {
-		log.Fatalf("Error opening %v: %v", *filename, err)
-	}
-
-	response, err := call.Media(file).Do()
-	if err != nil {
-		log.Fatalf("Error making YouTube API call: %v", err)
-	}
-	fmt.Printf("Upload successful! Video ID: %v\n", response.Id)
 }
 
+
+
+func decodeVideoInfo(response string) (streams streamList, err error) {
+	// decode
+
+	answer, err := url.ParseQuery(response)
+	if err != nil {
+		err = fmt.Errorf("parsing the server's answer: '%s'", err)
+		return
+	}
+
+	// check the status
+
+	err = ensureFields(answer, []string{"status", "url_encoded_fmt_stream_map", "title", "author"})
+	if err != nil {
+		err = fmt.Errorf("Missing fields in the server's answer: '%s'", err)
+		return
+	}
+
+	status := answer["status"]
+	if status[0] == "fail" {
+		reason, ok := answer["reason"]
+		if ok {
+			err = fmt.Errorf("'fail' response status found in the server's answer, reason: '%s'", reason[0])
+		} else {
+			err = errors.New(fmt.Sprint("'fail' response status found in the server's answer, no reason given"))
+		}
+		return
+	}
+	if status[0] != "ok" {
+		err = fmt.Errorf("non-success response status found in the server's answer (status: '%s')", status)
+		return
+	}
+
+	log("Server answered with a success code")
+
+	/*
+	for k, v := range answer {
+		log("%s: %#v", k, v)
+	}
+	*/
+
+	// read the streams map
+
+	stream_map := answer["url_encoded_fmt_stream_map"]
+
+	// read each stream
+
+	streams_list := strings.Split(stream_map[0], ",")
+
+	log("Found %d streams in answer", len(streams_list))
+
+	for stream_pos, stream_raw := range streams_list {
+		stream_qry, err := url.ParseQuery(stream_raw)
+		if err != nil {
+			log(fmt.Sprintf("An error occured while decoding one of the video's stream's information: stream %d: %s\n", stream_pos, err))
+			continue
+		}
+		err = ensureFields(stream_qry, []string{"quality", "type", "url"})
+		if err != nil {
+			log(fmt.Sprintf("Missing fields in one of the video's stream's information: stream %d: %s\n", stream_pos, err))
+			continue
+		}
+		/* dumps the raw streams
+		log(fmt.Sprintf("%v\n", stream_qry))
+		*/
+		stream := stream{
+			"quality": stream_qry["quality"][0],
+			"type": stream_qry["type"][0],
+			"url": stream_qry["url"][0],
+			"sig": "",
+			"title": answer["title"][0],
+			"author": answer["author"][0],
+		}
+		
+		if sig, exists := stream_qry["sig"]; exists { // old one
+			stream["sig"] = sig[0]
+		}
+		
+		if sig, exists := stream_qry["s"]; exists { // now they use this
+			stream["sig"] = sig[0]
+		}
+		
+		streams = append(streams, stream)
+
+		quality := stream.Quality()
+		if quality == QUALITY_UNKNOWN {
+			log("Found unknown quality '%s'", stream["quality"])
+		}
+
+		format := stream.Format()
+		if format == FORMAT_UNKNOWN {
+			log("Found unknown format '%s'", stream["type"])
+		}
+
+		log("Stream found: quality '%s', format '%s'", quality, format)
+	}
+
+	log("Successfully decoded %d streams", len(streams))
+
+	return
+}
