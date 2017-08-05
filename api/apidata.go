@@ -8,11 +8,11 @@ package api
 
 import (	
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	
@@ -85,7 +85,8 @@ func videosListById(service *youtube.Service, part string, id string) {
 //Gets Video Data from Youtube URL
 func APIGetVideoStream(service youtube.Service, url string)(videoData []byte, err error) {
 
-	videoStream := new(RawVideoData)
+	video := new(RawVideoData)//raw video data
+	var decodedVideo []string //decoded video data
 	
 	//Gets video Id
 	id , err := getVideoId(url)
@@ -98,130 +99,71 @@ func APIGetVideoStream(service youtube.Service, url string)(videoData []byte, er
 	defer resp.Body.Close()
 	out, e := ioutil.ReadAll(resp.Body)
 	auth.HandleError(e, "Error reading video data")
-	if err = json.Unmarshal(out, &a.output); err != nil {
-		logrus.Errorf("Error JSON Unmarshall: %v", err)
+	
+	output, er := url.ParseQuery(out)
+	if e != nil {
+		logrus.Fatalf("Error Parsing video byte stream", e)
 	}
-	//Extract Video information.
-	videoInfo := videosListById(service, "snippet,contentDetails", id)//fileDetails part not permitted.
+	//fmt.Println(string(output))
 	
-	//Get Data stream from video response
-	if err = json.Unmarshal(out, &videoStream); err != nil {
-		logrus.Errorf("Error JSON Unmarshall: %v", err)
+	//Process Video stream
+	video.URLEncodedFmtStreamMap = output["url_encoded_fmt_stream_map"]
+	video.Author  = output["author"]
+	video.Title = output["title"]
+	video.Status = output["status"]
+	
+	//Decode Video
+	outputStreams := strings.Split(video.URLEncodedFmtStreamMap[0], ",")
+	for cur, raw_data := range outputStream {
+		//decoding raw data stream
+		dec_data, err := url.ParseQuery(raw_data)
+		if err != nil {
+			logrus.Errorf("Error Decoding Video data: %d, %v", cur, err)
+			continue
+		}
+		
+		data := map[string]string{
+			"quality": dec_data["quality"][0],
+			"type": dec_data["type"][0],
+			"url": dec_data["url"][0],
+			"sig": dec_data["sig"][0],
+			"title": video.Title,
+			"author": video.Author,
+			"format": dec_data["format"][0],
+		}
+		
+		decodedVideo = append(decodedVideo, data)
+		logrus.Infof("\nDecoded %d bytes of '%s", in '%s' format, len(decodedVideo), dec_data["quality"][0], dec_data["format"][0])
 	}
 	
-	//Download data stream to memory.
 	
-	//convert video file to flv or mp3
-
-
+	//Download data stream to memory and convert to proper format
+	//NOTE: Use ffmpeg go bindings for this use case.
+	
 }
 
 
 
-func ApiDownloadVideo() {
+func APIDownloadVideo(videoStream map[string][]string) ([]byte, err) {
+	func (stream stream) download(out io.Writer) error {
+	url := stream.Url()
 
+	log("Downloading stream from '%s'", url)
 
-}
-
-
-
-func decodeVideoInfo(response string) (streams streamList, err error) {
-	// decode
-
-	answer, err := url.ParseQuery(response)
+	resp, err := http.Get(url)
 	if err != nil {
-		err = fmt.Errorf("parsing the server's answer: '%s'", err)
-		return
+		return fmt.Errorf("requesting stream: %s", err)
 	}
-
-	// check the status
-
-	err = ensureFields(answer, []string{"status", "url_encoded_fmt_stream_map", "title", "author"})
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("reading answer: non 200 status code received: '%s'", err)
+	}
+	length, err := io.Copy(out, resp.Body)
 	if err != nil {
-		err = fmt.Errorf("Missing fields in the server's answer: '%s'", err)
-		return
+		return fmt.Errorf("saving file: %s (%d bytes copied)", err, length)
 	}
 
-	status := answer["status"]
-	if status[0] == "fail" {
-		reason, ok := answer["reason"]
-		if ok {
-			err = fmt.Errorf("'fail' response status found in the server's answer, reason: '%s'", reason[0])
-		} else {
-			err = errors.New(fmt.Sprint("'fail' response status found in the server's answer, no reason given"))
-		}
-		return
-	}
-	if status[0] != "ok" {
-		err = fmt.Errorf("non-success response status found in the server's answer (status: '%s')", status)
-		return
-	}
+	log("Downloaded %d bytes", length)
 
-	log("Server answered with a success code")
-
-	/*
-	for k, v := range answer {
-		log("%s: %#v", k, v)
-	}
-	*/
-
-	// read the streams map
-
-	stream_map := answer["url_encoded_fmt_stream_map"]
-
-	// read each stream
-
-	streams_list := strings.Split(stream_map[0], ",")
-
-	log("Found %d streams in answer", len(streams_list))
-
-	for stream_pos, stream_raw := range streams_list {
-		stream_qry, err := url.ParseQuery(stream_raw)
-		if err != nil {
-			log(fmt.Sprintf("An error occured while decoding one of the video's stream's information: stream %d: %s\n", stream_pos, err))
-			continue
-		}
-		err = ensureFields(stream_qry, []string{"quality", "type", "url"})
-		if err != nil {
-			log(fmt.Sprintf("Missing fields in one of the video's stream's information: stream %d: %s\n", stream_pos, err))
-			continue
-		}
-		/* dumps the raw streams
-		log(fmt.Sprintf("%v\n", stream_qry))
-		*/
-		stream := stream{
-			"quality": stream_qry["quality"][0],
-			"type": stream_qry["type"][0],
-			"url": stream_qry["url"][0],
-			"sig": "",
-			"title": answer["title"][0],
-			"author": answer["author"][0],
-		}
-		
-		if sig, exists := stream_qry["sig"]; exists { // old one
-			stream["sig"] = sig[0]
-		}
-		
-		if sig, exists := stream_qry["s"]; exists { // now they use this
-			stream["sig"] = sig[0]
-		}
-		
-		streams = append(streams, stream)
-
-		quality := stream.Quality()
-		if quality == QUALITY_UNKNOWN {
-			log("Found unknown quality '%s'", stream["quality"])
-		}
-
-		format := stream.Format()
-		if format == FORMAT_UNKNOWN {
-			log("Found unknown format '%s'", stream["type"])
-		}
-
-		log("Stream found: quality '%s', format '%s'", quality, format)
-	}
-
-	log("Successfully decoded %d streams", len(streams))
-
-	return
+	return nil
 }

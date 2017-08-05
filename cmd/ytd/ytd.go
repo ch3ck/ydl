@@ -53,6 +53,16 @@ var (
 	maxResults = flag.Int64("max-results", 25, "Max YouTube results")
 )
 
+//Youtube Downloader Data file.
+type ApiData struct {
+	FileName    string
+	Title       string
+	description string
+	category    string
+	keywords    string
+	privacy     string
+	DataStream  []byte
+}
 
 func init() {
 	// parse flags
@@ -69,7 +79,7 @@ func init() {
 	flag.Parse()
 
 	if version {
-		fmt.Printf("%s", VERSION)
+		logrus.Infof("%s", VERSION)
 		os.Exit(0)
 	}
 
@@ -86,15 +96,16 @@ func main() {
 	service, err = auth.CreateYoutubeService(ctx)
 	auth.HandleError(err, "Error creating YouTube client")
 
+	
 	//channelsListByUsername(service, "snippet,contentDetails,statistics", "GoogleDevelopers")
 }
 
 func usageAndExit(message string, exitCode int) {
 	if message != "" {
-		fmt.Fprintf(os.Stderr, message)
-		fmt.Fprintf(os.Stderr, "\n\n")
+		logrus.Infof(os.Stderr, message)
+		logrus.Infof(os.Stderr, "\n\n")
 	}
 	flag.Usage()
-	fmt.Fprintf(os.Stderr, "\n")
+	logrus.Infof(os.Stderr, "\n")
 	os.Exit(exitCode)
 }
