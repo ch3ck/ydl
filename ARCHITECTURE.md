@@ -6,7 +6,7 @@ YTD is a tool for searching and downloading video and audio content from Youtube
 ## Overview
 
 It contains three main packages namely: 
-* the API(Data retrieval and requests to the Youtube API), 
+* The API(Data retrieval and requests to the Youtube API), 
 * Auth(Uses OAuth to make authenticated requests by the API package) when connecting to the Youtube API. There also consists a converter which is part of the API package to convert downloaded youtube data into other file formats such as FLV and mp3 only. 
 * The CMD basically gets the tool up and running taking queries from the user and returning data output to the user.
 
