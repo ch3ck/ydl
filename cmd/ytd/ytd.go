@@ -15,13 +15,13 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
-	"path/filepath"
-	
-	"github.com/Ch3ck/ytd/auth"
+
 	"github.com/Ch3ck/ytd/api"
+	"github.com/Ch3ck/ytd/auth"
 	"github.com/Sirupsen/logrus"
 
 	"golang.org/x/net/context"
@@ -30,23 +30,22 @@ import (
 	"google.golang.org/api/youtube/v3"
 )
 
-
 const (
-	
+
 	//Developer key
 	devKey = "" //Generated from OAuth
-	
+
 	//BANNER for ytd which prints the help info
 	BANNER = "ytd - %s\n"
 	//VERSION which prints the ytd version.
 	VERSION = "v0.1"
-)	
+)
 
 var (
-	key		string
-	query	string
-	version	bool
-	
+	key     string
+	query   string
+	version bool
+
 	//TODO: Currently only the first result will be returned on CLI
 	maxResults = flag.Int64("max-results", 25, "Max YouTube results")
 )
@@ -88,13 +87,11 @@ func init() {
 
 }
 
-
 func main() {
 	ctx := context.Background()
 	service, err = auth.CreateYoutubeService(ctx)
 	auth.HandleError(err, "Error creating YouTube client")
 
-	
 	//channelsListByUsername(service, "snippet,contentDetails,statistics", "GoogleDevelopers")
 }
 
