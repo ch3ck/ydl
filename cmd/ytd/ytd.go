@@ -7,27 +7,14 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"net/url"
 	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
-	"syscall"
 
-	"github.com/Ch3ck/ytd/api"
 	"github.com/Ch3ck/ytd/auth"
 	"github.com/Sirupsen/logrus"
 
 	"golang.org/x/net/context"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/youtube/v3"
 )
 
 const (

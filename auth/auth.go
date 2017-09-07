@@ -6,21 +6,21 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"net"
+	"log"
 	"net/http"
+	"net/url"
 	"os"
-	"os/exec"
+	"os/user"
 	"path/filepath"
-	"runtime"
 
 	"github.com/Sirupsen/logrus"
 	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 	"google.golang.org/api/youtube/v3"
 )
 
