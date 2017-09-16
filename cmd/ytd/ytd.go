@@ -29,8 +29,7 @@ var (
 	format string
 	path string
 	bitrate uint
-	video RawVideoData
-	fil string
+	file string
 )
 
 func init() {
@@ -55,8 +54,27 @@ func init() {
 }
 
 func main() {
-	//after decoding information
+	var ID string
+	var rawVideo RawVideoData
+	if len(os.Args) == 1) {
+		usageAndExit(BANNER, -1)
+	}
 	
+	//Get Video Id
+	if id == "" {
+		url := os.Args[1]
+		ID, _ = getVideoId(id)
+	} else {
+		ID, _ = getVideoId(id)
+	}
+	
+	//Extract Video data and decode
+	video, err := api.APIGetVideoStream(ID, rawVideo)
+	if err != nil {
+		logrus.Errorf("Error decoding Video stream: %v", err)
+	}
+	
+	//Convert and Download video data
 	//create output file name and set path properly.
 	file = path + video["title"] + video["author"]
 	if format == "mp3" {
@@ -66,7 +84,10 @@ func main() {
 		file = file + ".flv"
 	}
 	
-	
+	err = APIConvertVideo(file, bitrate, ID, video)
+	if err != nil {
+		logrus.Errorf("Error downloading video: %v", err)
+	}	
 }
 
 func usageAndExit(message string, exitCode int) {

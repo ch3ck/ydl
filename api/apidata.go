@@ -38,7 +38,9 @@ type RawVideoData struct {
 
 //gets the Video ID from youtube url
 func getVideoId(url string) (string, error) {
-
+	if !strings.Contains( url, "youtube.com") {
+		return nil, errors.New("Invalid Youtube link")
+	}
 	s := strings.Split(url, "?v=")
 	s = strings.Split(s[1], "&")
 	if len(s[0]) == 0 {
@@ -69,7 +71,7 @@ func APIGetVideoStream(id string, video RawVideoData) (videoData []byte, err err
 
 	output, er := url.ParseQuery(out)
 	if e != nil {
-		logrus.Fatalf("Error Parsing video byte stream: %v", e)
+		return nil, errors.New("Error Parsing video byte stream: %v", e)
 	}
 
 	//Process Video stream
@@ -102,5 +104,5 @@ func APIGetVideoStream(id string, video RawVideoData) (videoData []byte, err err
 		logrus.Infof("\nDecoded %d bytes of %q, in %q format", len(decodedVideo), dec_data["quality"][0], dec_data["format"][0])
 	}
 
-	return decodedVideo
+	return decodedVideo, nil
 }

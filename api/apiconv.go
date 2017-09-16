@@ -19,7 +19,7 @@ import (
 
 //Converts Decoded Video file to mp3 by default with 123 bitrate or to
 //flv if otherwise specified and downloads to system
-func APIConvertVideo(file string, int bitrate, url string, decVideo []byte) (io.Writer, error) {
+func APIConvertVideo(file string, int bitrate, id string, decVideo []byte)  error {
 	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), path)
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -46,7 +46,7 @@ func APIConvertVideo(file string, int bitrate, url string, decVideo []byte) (io.
 		if err != nil {
 			logrus.Error("Unable to download video file.", err)
 		}
-		err = apiDownloadVideo(url, cmd)
+		err = apiDownloadVideo(id, cmd)
 		return err
 	}
 
