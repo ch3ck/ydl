@@ -7,6 +7,9 @@
 package api
 
 import (
+	"bytes"
+	"encoding/gob"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,7 +22,7 @@ import (
 
 //Converts Decoded Video file to mp3 by default with 123 bitrate or to
 //flv if otherwise specified and downloads to system
-func APIConvertVideo(file string, bitrate int, id string, decVideo []byte) error {
+func APIConvertVideo(file string, bitrate int, id string, decVideo []string) error {
 	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), file)
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -31,22 +34,26 @@ func APIConvertVideo(file string, bitrate int, id string, decVideo []byte) error
 
 	logrus.Infof("Converting video to %q format", filepath.Ext(file))
 	if filepath.Ext(file) == ".mp3" {
-		// NOTE: To modify to use Go ffmpeg bindings or cgo
+		/* NOTE: To modify to use Go ffmpeg bindings or cgo */
+
+		buf := &bytes.Buffer{}
+		gob.NewEncoder(buf).Encode(decVideo)
 		_, err = exec.LookPath("ffmpeg")
 		if err != nil {
-			logrus.Errorf("ffmpeg not found on system")
+			return errors.New("ffmpeg not found on system")
 		}
 
 		cmd.Start()
 		logrus.Infof("Downloading mp3 file to disk %s", file)
-		cmd.Write(decVideo) //download file.
+		stdin.Write(buf.Bytes()) //download file.
 
 	} else {
-		cmd, err = os.Create(file)
+		out, err := os.Create(file)
 		if err != nil {
-			logrus.Error("Unable to download video file.", err)
+			logrus.Errorf("Unable to download video file.", err)
+			return err
 		}
-		err = apiDownloadVideo(id, cmd)
+		err = apiDownloadVideo(id, out)
 		return err
 	}
 
@@ -54,10 +61,10 @@ func APIConvertVideo(file string, bitrate int, id string, decVideo []byte) error
 }
 
 //Downloads decoded video stream.
-func apiDownloadVideo(videoUrl, cmd io.Writer) error {
+func apiDownloadVideo(url string, out io.Writer) error {
 	logrus.Infof("Downloading file stream")
 
-	resp, err := http.Get(url)
+	resp, err := http.Get(videoExtractor + url)
 	if err != nil {
 		return fmt.Errorf("requesting stream: %s", err)
 	}
