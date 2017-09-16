@@ -1,5 +1,5 @@
 # ytd
-`ytd` is Go application for downloading Youtube videos and converting to other formats(flv, mp3). To understand the design take a look at the  [Design Document](ARCHITECTURE.md).
+`ytd` is Go application for downloading Youtube videos and converting to other formats(flv, mp3). To understand the design take a look at the [Design Document](ARCHITECTURE.md).
 
 ```
 .
@@ -21,7 +21,6 @@
 ├── simple.go
 └── vendor
       ....
-
 ```
 
 ## Pre requisites
@@ -29,7 +28,7 @@
 * [Go version 1.8](https://github.com/golang/go/releases/tag/go.1.8.3)
 * [Docker CE 17.06](https://docs.docker.com/release-notes/docker-ce/)
 
-Clone GIT repo:
+Clone GIT repo and install some dependencies:
 ```
 $ git clone htps://github.com/Ch3ck/ytd
 $ go get -u google.golang.org/api/youtube/v3
@@ -62,17 +61,17 @@ $ ytd -h
 $ ytd <link>
   searches for youtube video on that link and downloads
 ```
-Running `ytd` without any arguments will prompt for link
+Running `ytd` without any arguments will prompt for link.
 
 
 ## Roadmap
 
-* Search for Youtube vidoes based on the Link and provides the download options for either mp3 or flv file
-* Support HD Video download
-* Support search with Youtube API, process results and user chooses whatever files to download
-* Multithreaded downloads
-* Web App(PWA, Basic JS Web UI)
-* Package for OSX, Android, iOS
+* Search for Youtube vidoes based on the Link and provides the download options for either mp3 or flv file.
+* Support HD Video download.
+* Support search with Youtube API, process results and user chooses whatever files to download.
+* Multithreaded downloads.
+* Web App(PWA, Basic JS Web UI).
+* Package for OSX, Android, iOS.
 
 
 ## Contributing
@@ -85,4 +84,4 @@ YTD is licensed under [The MIT Licence](LICENSE.md).
 
 ## Author
 
-This project was created and maintained by [Nyah Check](https://twitter.com/nyah_check). Please feel free to reach out, I could always use your help or advice :-)
+This project was created and maintained by [Nyah Check](https://twitter.com/nyah_check). Please feel free to reach out, I could always use your help or advice. :-)
