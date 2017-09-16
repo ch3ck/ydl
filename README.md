@@ -2,29 +2,25 @@
 `ytd` is Go application for downloading Youtube videos and converting to other formats(flv, mp3). To understand the design take a look at the  [Design Document](ARCHITECTURE.md).
 
 ```
-ytd
+.
 ├── api
 │   ├── apiconv.go
-│   ├── apiconv_test.go
 │   ├── apidata.go
-│   ├── apidata_test.go
-│   ├── apisearch.go
-│   └── apisearch_test.go
+│   └── apidata_test.go
+├── ARCHITECTURE.md
+├── build.sh
 ├── cmd
 │   └── ytd
 │       ├── ytd.go
 │       └── ytd_test.go
-├── vendor
-│   └── ...
-│    
 ├── CONTRIBUTING.md
-├── ARCHITECTURE.md
 ├── Dockerfile
 ├── LICENSE
 ├── Makefile
 ├── README.md
 ├── simple.go
-└── build.sh
+└── vendor
+      ....
 
 ```
 
