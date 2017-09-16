@@ -10,22 +10,21 @@ ytd
 │   ├── apidata_test.go
 │   ├── apisearch.go
 │   └── apisearch_test.go
-├── ARCHITECTURE.md
-├── auth
-│   ├── auth.go
-│   ├── auth_test.go
-│   ├── client_secret.json
-│   └── ytd-auth.json
 ├── cmd
 │   └── ytd
 │       ├── ytd.go
 │       └── ytd_test.go
+├── vendor
+│   └── ...
+│    
 ├── CONTRIBUTING.md
+├── ARCHITECTURE.md
 ├── Dockerfile
 ├── LICENSE
 ├── Makefile
 ├── README.md
-└── vendor
+├── simple.go
+└── build.sh
 
 ```
 
