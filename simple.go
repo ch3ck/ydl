@@ -8,8 +8,8 @@ import (
 	//"encoding/json"
 	"fmt"
 	"io"
-	"os"
-	"os/exec"
+	//"os"
+	//"os/exec"
 	"io/ioutil"
 	//"log"
 	"net/http"
@@ -96,7 +96,7 @@ func main() {
 		}
 		
 		decodedVideo = append(decodedVideo, data)
-		logrus.Infof("\nDecoded %d bytes of '%s", in '%s' format, len(decodedVideo), dec_data["quality"][0], dec_data["format"][0])
+		logrus.Infof("\nDecoded %d bytes of '%s' in '%s'", format, len(decodedVideo), dec_data["quality"][0], dec_data["format"][0])
 	}
 	
 	//Download video
