@@ -7,14 +7,10 @@
 package api
 
 import (
-	"bytes"
 	"errors"
-	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 
 	"github.com/Sirupsen/logrus"
@@ -37,7 +33,7 @@ type RawVideoData struct {
 }
 
 //gets the Video ID from youtube url
-func getVideoId(url string) (string, error) {
+func GetVideoId(url string) (string, error) {
 	if !strings.Contains(url, "youtube.com") {
 		return nil, errors.New("Invalid Youtube link")
 	}
@@ -53,8 +49,8 @@ func getVideoId(url string) (string, error) {
 //Gets Video Info, Decode Video Info from a Video ID.
 func APIGetVideoStream(id string, video RawVideoData) (videoData []byte, err error) {
 
-	video := new(RawVideoData) //raw video data
-	var decodedVideo []string  //decoded video data
+	video = new(RawVideoData) //raw video data
+	var decodedVideo []string //decoded video data
 
 	//Get Video Data stream
 	videoUrl := videoExtractor + id

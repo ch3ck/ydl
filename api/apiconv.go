@@ -7,23 +7,23 @@
 package api
 
 import (
-	"errors"
-	"flag"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
+
+	"github.com/Sirupsen/logrus"
 )
 
 //Converts Decoded Video file to mp3 by default with 123 bitrate or to
 //flv if otherwise specified and downloads to system
-func APIConvertVideo(file string, int bitrate, id string, decVideo []byte) error {
-	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), path)
+func APIConvertVideo(file string, bitrate int, id string, decVideo []byte) error {
+	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), file)
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		logrus.Fatalf(err)
+		return err
 	}
 	if filepath.Ext(file) != ".mp3" && filepath.Ext(file) != ".flv" {
 		file = file[:len(file)-4] + ".mp3"
@@ -38,11 +38,11 @@ func APIConvertVideo(file string, int bitrate, id string, decVideo []byte) error
 		}
 
 		cmd.Start()
-		logrus.Infof("Downloading mp3 file to disk %s", path)
+		logrus.Infof("Downloading mp3 file to disk %s", file)
 		cmd.Write(decVideo) //download file.
 
 	} else {
-		cmd, err = os.Create(path)
+		cmd, err = os.Create(file)
 		if err != nil {
 			logrus.Error("Unable to download video file.", err)
 		}
@@ -54,7 +54,7 @@ func APIConvertVideo(file string, int bitrate, id string, decVideo []byte) error
 }
 
 //Downloads decoded video stream.
-func APIDownloadVideo(videoUrl, cmd io.Writer) error {
+func apiDownloadVideo(videoUrl, cmd io.Writer) error {
 	logrus.Infof("Downloading file stream")
 
 	resp, err := http.Get(url)

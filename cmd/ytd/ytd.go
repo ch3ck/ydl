@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Ch3ck/ytd/api"
 	"github.com/Sirupsen/logrus"
 )
 
@@ -54,7 +55,7 @@ func init() {
 
 func main() {
 	var ID string
-	var rawVideo RawVideoData
+	var rawVideo api.RawVideoData
 	if len(os.Args) == 1 {
 		usageAndExit(BANNER, -1)
 	}
@@ -62,9 +63,9 @@ func main() {
 	//Get Video Id
 	if id == "" {
 		url := os.Args[1]
-		ID, _ = getVideoId(id)
+		ID, _ = api.GetVideoId(id)
 	} else {
-		ID, _ = getVideoId(id)
+		ID, _ = api.GetVideoId(id)
 	}
 
 	//Extract Video data and decode
@@ -83,7 +84,7 @@ func main() {
 		file = file + ".flv"
 	}
 
-	err = APIConvertVideo(file, bitrate, ID, video)
+	err = api.APIConvertVideo(file, bitrate, ID, video)
 	if err != nil {
 		logrus.Errorf("Error downloading video: %v", err)
 	}
