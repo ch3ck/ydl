@@ -6,7 +6,7 @@
 
 package api
 
-import (	
+import (
 	"bytes"
 	"errors"
 	"fmt"
@@ -16,27 +16,25 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	
+
 	"github.com/Sirupsen/logrus"
 )
 
-
 //const variables
 const (
-	
+
 	//Video extractor
 	videoExtractor = "http://youtube.com/get_video_info?video_id="
 )
 
 //Youtube Downloader Data file.
 type RawVideoData struct {
-	Title     				string `json:"title"`
-	Author     				string `json:"author`
-	Status                 	string `json:"status"`
-	URLEncodedFmtStreamMap 	map[string][]string `json:"url_encoded_fmt_stream_map"`
+	Title                  string              `json:"title"`
+	Author                 string              `json:"author`
+	Status                 string              `json:"status"`
+	URLEncodedFmtStreamMap map[string][]string `json:"url_encoded_fmt_stream_map"`
 }
-		
-}
+
 type ApiData struct {
 	FileName    string
 	Title       string
@@ -47,53 +45,51 @@ type ApiData struct {
 	DataStream  []byte
 }
 
-
 //gets the Video ID from youtube url
-func getVideoId(url string) ( string, error) {
+func getVideoId(url string) (string, error) {
 
 	s := strings.Split(url, "?v=")
 	s = strings.Split(s[1], "&")
 	if len(s[0]) == 0 {
 		return s[0], errors.New("Empty string")
 	}
-	
+
 	return s[0], nil
 }
 
-
 //Gets Video Info, Decode Video Info from a Video ID.
-func APIGetVideoStream(url string)(videoData []byte, err error) {
+func APIGetVideoStream(url string) (videoData []byte, err error) {
 
-	video := new(RawVideoData)//raw video data
-	var decodedVideo []string //decoded video data
-	
+	video := new(RawVideoData) //raw video data
+	var decodedVideo []string  //decoded video data
+
 	//Gets video Id
-	id , err := getVideoId(url)
-	
+	id, err := getVideoId(url)
+
 	//Get Video Data stream
 	videoUrl := videoExtractor + id
 	resp, er := http.Get(videoUrl)
 	if er != nil {
 		logrus.Errorf("Error in GET request: %v", er)
 	}
-	
+
 	defer resp.Body.Close()
 	out, e := ioutil.ReadAll(resp.Body)
 	if e != nil {
 		logrus.Errorf("Error reading video data: %v", e)
 	}
-		
+
 	output, er := url.ParseQuery(out)
 	if e != nil {
 		logrus.Fatalf("Error Parsing video byte stream: %v", e)
 	}
-	
+
 	//Process Video stream
 	video.URLEncodedFmtStreamMap = output["url_encoded_fmt_stream_map"]
-	video.Author  = output["author"]
+	video.Author = output["author"]
 	video.Title = output["title"]
 	video.Status = output["status"]
-	
+
 	//Decode Video
 	outputStreams := strings.Split(video.URLEncodedFmtStreamMap[0], ",")
 	for cur, raw_data := range outputStream {
@@ -103,26 +99,25 @@ func APIGetVideoStream(url string)(videoData []byte, err error) {
 			logrus.Errorf("Error Decoding Video data: %d, %v", cur, err)
 			continue
 		}
-		
+
 		data := map[string]string{
 			"quality": dec_data["quality"][0],
-			"type": dec_data["type"][0],
-			"url": dec_data["url"][0],
-			"sig": dec_data["sig"][0],
-			"title": video.Title,
-			"author": video.Author,
-			"format": dec_data["format"][0],
+			"type":    dec_data["type"][0],
+			"url":     dec_data["url"][0],
+			"sig":     dec_data["sig"][0],
+			"title":   video.Title,
+			"author":  video.Author,
+			"format":  dec_data["format"][0],
 		}
-		
+
 		decodedVideo = append(decodedVideo, data)
-		logrus.Infof("\nDecoded %d bytes of '%s", in '%s' format, len(decodedVideo), dec_data["quality"][0], dec_data["format"][0])
+		logrus.Infof("\nDecoded %d bytes of %q, in %q format", len(decodedVideo), dec_data["quality"][0], dec_data["format"][0])
 	}
-	
+
 	return decodedVideo
 }
 
-
-// 
+//
 //Downloads decoded video stream.
 func APIDownloadVideo(videoUrl string) error {
 
