@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -60,49 +61,32 @@ func getVideoId(url string) ( string, error) {
 }
 
 
-
-func printVideosListResults(response *youtube.VideoListResponse) {
-        for _, item := range response.Items {
-                fmt.Println(item.Id, ": ", item.Snippet.Title)
-        }
-}
-
-//Prints the video list by ID.
-func videosListById(service *youtube.Service, part string, id string) {
-        call := service.Videos.List(part)
-        if id != "" {
-                call = call.Id(id)
-        }
-        response, err := call.Do()
-        handleError(err, "")
-        printVideosListResults(response)
-}
-
-
-
-//Gets Video Data from Youtube URL
-func APIGetVideoStream(service youtube.Service, url string)(videoData []byte, err error) {
+//Gets Video Info, Decode Video Info from a Video ID.
+func APIGetVideoStream(url string)(videoData []byte, err error) {
 
 	video := new(RawVideoData)//raw video data
 	var decodedVideo []string //decoded video data
 	
 	//Gets video Id
 	id , err := getVideoId(url)
-	auth.HandleError(err, "Invalid youtube URL.")
 	
 	//Get Video Data stream
 	videoUrl := videoExtractor + id
 	resp, er := http.Get(videoUrl)
-	auth.HandleError(er, "Error in GET request)
+	if er != nil {
+		logrus.Errorf("Error in GET request: %v", er)
+	}
+	
 	defer resp.Body.Close()
 	out, e := ioutil.ReadAll(resp.Body)
-	auth.HandleError(e, "Error reading video data")
-	
+	if e != nil {
+		logrus.Errorf("Error reading video data: %v", e)
+	}
+		
 	output, er := url.ParseQuery(out)
 	if e != nil {
-		logrus.Fatalf("Error Parsing video byte stream", e)
+		logrus.Fatalf("Error Parsing video byte stream: %v", e)
 	}
-	//fmt.Println(string(output))
 	
 	//Process Video stream
 	video.URLEncodedFmtStreamMap = output["url_encoded_fmt_stream_map"]
@@ -134,17 +118,13 @@ func APIGetVideoStream(service youtube.Service, url string)(videoData []byte, er
 		logrus.Infof("\nDecoded %d bytes of '%s", in '%s' format, len(decodedVideo), dec_data["quality"][0], dec_data["format"][0])
 	}
 	
-	
-	//Download data stream to memory and convert to proper format
-	//NOTE: Use ffmpeg go bindings for this use case.
-	
+	return decodedVideo
 }
 
 
-
-func APIDownloadVideo(videoStream map[string][]string) ([]byte, err) {
-	func (stream stream) download(out io.Writer) error {
-	url := stream.Url()
+// 
+//Downloads decoded video stream.
+func APIDownloadVideo(videoUrl string) error {
 
 	log("Downloading stream from '%s'", url)
 
@@ -164,43 +144,4 @@ func APIDownloadVideo(videoStream map[string][]string) ([]byte, err) {
 	log("Downloaded %d bytes", length)
 
 	return nil
-}
-
-
-//Search youtube API for video data.
-func SearchApi(service youtube.Service) {
-
-	
-	// Group video, channel, and playlist results in separate lists.
-	videos := make(map[string]string)
-	channels := make(map[string]string)
-	playlists := make(map[string]string)
-
-	// Iterate through each item and add it to the correct list.
-	for _, item := range response.Items {
-		switch item.Id.Kind {
-		case "youtube#video":
-			videos[item.Id.VideoId] = item.Snippet.Title
-		case "youtube#channel":
-			channels[item.Id.ChannelId] = item.Snippet.Title
-		case "youtube#playlist":
-			playlists[item.Id.PlaylistId] = item.Snippet.Title
-		}
-	}
-
-	printIDs("Videos", videos)
-	printIDs("Channels", channels)
-	printIDs("Playlists", playlists)
-}
-
-// Print the ID and title of each result in a list as well as a name that
-// identifies the list. For example, print the word section name "Videos"
-// above a list of video search results, followed by the video ID and title
-// of each matching video.
-func APIPrintIDs(sectionName string, matches map[string]string) {
-	fmt.Printf("%v:\n", sectionName)
-	for id, title := range matches {
-		fmt.Printf("[%v] %v\n", id, title)
-	}
-	fmt.Printf("\n\n")
 }

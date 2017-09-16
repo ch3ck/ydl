@@ -19,7 +19,6 @@ import (
 	"github.com/Sirupsen/logrus"
 
 	"google.golang.org/api/googleapi/transport"
-	youtube "google.golang.org/api/youtube/v3"
 )
 
 const developerKey = "AIzaSyCZSy5sOGsZrOrI0vLtowf_VJ-tl_USzNE"
@@ -102,8 +101,7 @@ func main() {
 	return
 }
 
-func (stream stream) download(out io.Writer) error {
-	url := stream.Url()
+func (url string) download(out io.Writer) error {
 
 	log("Downloading stream from '%s'", url)
 
