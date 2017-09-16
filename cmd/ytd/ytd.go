@@ -63,7 +63,7 @@ func main() {
 	//Get Video Id
 	if id == "" {
 		url := os.Args[1]
-		ID, _ = api.GetVideoId(id)
+		ID, _ = api.GetVideoId(url)
 	} else {
 		ID, _ = api.GetVideoId(id)
 	}
