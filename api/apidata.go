@@ -17,8 +17,6 @@ import (
 	"strings"
 	
 	"github.com/Sirupsen/logrus"
-
-	"google.golang.org/api/youtube/v3"
 )
 
 

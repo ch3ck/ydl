@@ -11,16 +11,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Ch3ck/ytd/auth"
 	"github.com/Sirupsen/logrus"
-
-	"golang.org/x/net/context"
 )
 
 const (
-
-	//Developer key
-	devKey = "" //Generated from OAuth
 
 	//BANNER for ytd which prints the help info
 	BANNER = "ytd - %s\n"
@@ -29,7 +23,6 @@ const (
 )
 
 var (
-	key     string
 	query   string
 	version bool
 
@@ -50,7 +43,6 @@ type ApiData struct {
 
 func init() {
 	// parse flags
-	flag.StringVar(&key, "key", "", "Youtube API key")
 	flag.StringVar(&query, "query", "", "Youtube search Query")
 
 	flag.BoolVar(&version, "version", false, "print version and exit")
@@ -66,20 +58,10 @@ func init() {
 		logrus.Infof("%s", VERSION)
 		os.Exit(0)
 	}
-
-	// set log level
-	if debug {
-		logrus.SetLevel(logrus.DebugLevel)
-	}
-
 }
 
 func main() {
-	ctx := context.Background()
-	service, err = auth.CreateYoutubeService(ctx)
-	auth.HandleError(err, "Error creating YouTube client")
 
-	//channelsListByUsername(service, "snippet,contentDetails,statistics", "GoogleDevelopers")
 }
 
 func usageAndExit(message string, exitCode int) {
