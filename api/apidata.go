@@ -38,7 +38,7 @@ type RawVideoData struct {
 
 //gets the Video ID from youtube url
 func getVideoId(url string) (string, error) {
-	if !strings.Contains( url, "youtube.com") {
+	if !strings.Contains(url, "youtube.com") {
 		return nil, errors.New("Invalid Youtube link")
 	}
 	s := strings.Split(url, "?v=")

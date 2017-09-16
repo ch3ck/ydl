@@ -17,19 +17,18 @@ import (
 const (
 
 	//BANNER for ytd which prints the help info
-	BANNER = "ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrl"%s\n"
+	BANNER = "ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrl%s\n"
 	//VERSION which prints the ytd version.
 	VERSION = "v0.1"
 )
 
 var (
-
-	id  string
+	id      string
 	version bool
-	format string
-	path string
+	format  string
+	path    string
 	bitrate uint
-	file string
+	file    string
 )
 
 func init() {
@@ -56,10 +55,10 @@ func init() {
 func main() {
 	var ID string
 	var rawVideo RawVideoData
-	if len(os.Args) == 1) {
+	if len(os.Args) == 1 {
 		usageAndExit(BANNER, -1)
 	}
-	
+
 	//Get Video Id
 	if id == "" {
 		url := os.Args[1]
@@ -67,27 +66,27 @@ func main() {
 	} else {
 		ID, _ = getVideoId(id)
 	}
-	
+
 	//Extract Video data and decode
 	video, err := api.APIGetVideoStream(ID, rawVideo)
 	if err != nil {
 		logrus.Errorf("Error decoding Video stream: %v", err)
 	}
-	
+
 	//Convert and Download video data
 	//create output file name and set path properly.
 	file = path + video["title"] + video["author"]
 	if format == "mp3" {
 		file = file + ".mp3"
-		
+
 	} else { //defaults to flv format for video files.)
 		file = file + ".flv"
 	}
-	
+
 	err = APIConvertVideo(file, bitrate, ID, video)
 	if err != nil {
 		logrus.Errorf("Error downloading video: %v", err)
-	}	
+	}
 }
 
 func usageAndExit(message string, exitCode int) {
