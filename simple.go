@@ -8,38 +8,37 @@ import (
 	//"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 	//"os"
 	//"os/exec"
 	"io/ioutil"
 	//"log"
 	"net/http"
 	"net/url"
-	
+
 	"github.com/Sirupsen/logrus"
 
 	"google.golang.org/api/googleapi/transport"
 	youtube "google.golang.org/api/youtube/v3"
 )
 
-
 const developerKey = "AIzaSyCZSy5sOGsZrOrI0vLtowf_VJ-tl_USzNE"
 
 type RawVideoData struct {
-	Title     				string `json:"title"`
-	Author     				string `json:"author`
-	Status                 	string `json:"status"`
-	URLEncodedFmtStreamMap 	map[string][]string `json:"url_encoded_fmt_stream_map"`
+	Title                  string              `json:"title"`
+	Author                 string              `json:"author`
+	Status                 string              `json:"status"`
+	URLEncodedFmtStreamMap map[string][]string `json:"url_encoded_fmt_stream_map"`
 }
-
 
 func main() {
 
 	videoExtractor := "https://youtube.com/get_video_info?video_id="
 	var decodedVideo []string
 	id := "Ks-_Mh1QhMc"
-	
+
 	video := new(RawVideoData)
-	
+
 	client := &http.Client{
 		Transport: &transport.APIKey{Key: developerKey},
 	}
@@ -49,9 +48,8 @@ func main() {
 		logrus.Fatalf("Error creating new YouTube client: %v", err)
 	}
 
-    
 	logrus.Infof("Starting the Video extration process.")
-	
+
 	//Get Video Data stream
 	videoUrl := videoExtractor + id
 	res, er := http.Get(videoUrl)
@@ -68,13 +66,13 @@ func main() {
 		logrus.Fatalf("Error unmarshalling output", e)
 	}
 	fmt.Println(string(output))
-	
+
 	//Process Video stream
 	video.URLEncodedFmtStreamMap = output["url_encoded_fmt_stream_map"]
-	video.Author  = output["author"]
+	video.Author = output["author"]
 	video.Title = output["title"]
 	video.Status = output["status"]
-	
+
 	//Decode Video
 	outputStreams := strings.Split(video.URLEncodedFmtStreamMap[0], ",")
 	for cur, raw_data := range outputStream {
@@ -84,28 +82,25 @@ func main() {
 			logrus.Errorf("Error Decoding Video data: %d, %v", cur, err)
 			continue
 		}
-		
+
 		data := map[string]string{
 			"quality": dec_data["quality"][0],
-			"type": dec_data["type"][0],
-			"url": dec_data["url"][0],
-			"sig": dec_data["sig"][0],
-			"title": video.Title,
-			"author": video.Author,
-			"format": dec_data["format"][0],
+			"type":    dec_data["type"][0],
+			"url":     dec_data["url"][0],
+			"sig":     dec_data["sig"][0],
+			"title":   video.Title,
+			"author":  video.Author,
+			"format":  dec_data["format"][0],
 		}
-		
+
 		decodedVideo = append(decodedVideo, data)
 		logrus.Infof("\nDecoded %d bytes of '%s' in '%s'", format, len(decodedVideo), dec_data["quality"][0], dec_data["format"][0])
 	}
-	
-	//Download video
-	
 
-    
+	//Download video
+
 	return
 }
-
 
 func (stream stream) download(out io.Writer) error {
 	url := stream.Url()
@@ -129,8 +124,3 @@ func (stream stream) download(out io.Writer) error {
 
 	return nil
 }
-
-
-
-
-
