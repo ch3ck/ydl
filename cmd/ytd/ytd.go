@@ -17,7 +17,7 @@ import (
 const (
 
 	//BANNER for ytd which prints the help info
-	BANNER = "ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrl"%s\n"
+	BANNER = "ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrl%s\n"
 	//VERSION which prints the ytd version.
 	VERSION = "v0.1"
 )
