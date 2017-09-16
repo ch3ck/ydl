@@ -22,6 +22,7 @@ import (
 
 //const variables
 const (
+	audioBitRate = 123 //default audio bit rate.
 
 	//Video extractor
 	videoExtractor = "http://youtube.com/get_video_info?video_id="
@@ -33,16 +34,6 @@ type RawVideoData struct {
 	Author                 string              `json:"author`
 	Status                 string              `json:"status"`
 	URLEncodedFmtStreamMap map[string][]string `json:"url_encoded_fmt_stream_map"`
-}
-
-type ApiData struct {
-	FileName    string
-	Title       string
-	description string
-	category    string
-	keywords    string
-	privacy     string
-	DataStream  []byte
 }
 
 //gets the Video ID from youtube url
@@ -58,13 +49,10 @@ func getVideoId(url string) (string, error) {
 }
 
 //Gets Video Info, Decode Video Info from a Video ID.
-func APIGetVideoStream(url string) (videoData []byte, err error) {
+func APIGetVideoStream(id string, video RawVideoData) (videoData []byte, err error) {
 
 	video := new(RawVideoData) //raw video data
 	var decodedVideo []string  //decoded video data
-
-	//Gets video Id
-	id, err := getVideoId(url)
 
 	//Get Video Data stream
 	videoUrl := videoExtractor + id
@@ -115,28 +103,4 @@ func APIGetVideoStream(url string) (videoData []byte, err error) {
 	}
 
 	return decodedVideo
-}
-
-//
-//Downloads decoded video stream.
-func APIDownloadVideo(videoUrl string) error {
-
-	log("Downloading stream from '%s'", url)
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return fmt.Errorf("requesting stream: %s", err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		return fmt.Errorf("reading answer: non 200 status code received: '%s'", err)
-	}
-	length, err := io.Copy(out, resp.Body)
-	if err != nil {
-		return fmt.Errorf("saving file: %s (%d bytes copied)", err, length)
-	}
-
-	log("Downloaded %d bytes", length)
-
-	return nil
 }

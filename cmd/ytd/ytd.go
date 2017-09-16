@@ -17,35 +17,29 @@ import (
 const (
 
 	//BANNER for ytd which prints the help info
-	BANNER = "ytd - %s\n"
+	BANNER = "ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrl"%s\n"
 	//VERSION which prints the ytd version.
 	VERSION = "v0.1"
 )
 
 var (
-	query   string
+
+	id  string
 	version bool
-
-	//TODO: Currently only the first result will be returned on CLI
-	maxResults = flag.Int64("max-results", 25, "Max YouTube results")
+	format string
+	path string
+	bitrate uint
+	video RawVideoData
+	fil string
 )
-
-//Youtube Downloader Data file.
-type ApiData struct {
-	FileName    string
-	Title       string
-	description string
-	category    string
-	keywords    string
-	privacy     string
-	DataStream  []byte
-}
 
 func init() {
 	// parse flags
-	flag.StringVar(&query, "query", "", "Youtube search Query")
-
+	flag.StringVar(&id, "id", "", "Youtube Video ID")
+	flag.StringVar(&format, "format", "", "File Format(mp3, webm, flv)")
+	flag.StringVar(&path, "path", ".", "Output Path")
 	flag.BoolVar(&version, "version", false, "print version and exit")
+	flag.UintVar(&bitrate, "bitrate", 123, "Audio Bitrate")
 
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, fmt.Sprintf(BANNER, VERSION))
@@ -61,7 +55,18 @@ func init() {
 }
 
 func main() {
-
+	//after decoding information
+	
+	//create output file name and set path properly.
+	file = path + video["title"] + video["author"]
+	if format == "mp3" {
+		file = file + ".mp3"
+		
+	} else { //defaults to flv format for video files.)
+		file = file + ".flv"
+	}
+	
+	
 }
 
 func usageAndExit(message string, exitCode int) {
