@@ -55,7 +55,7 @@ func init() {
 
 func main() {
 	var ID string
-	var rawVideo api.RawVideoData
+	var rawVideo *api.RawVideoData
 	if len(os.Args) == 1 {
 		usageAndExit(BANNER, -1)
 	}
@@ -76,7 +76,7 @@ func main() {
 
 	//Convert and Download video data
 	//create output file name and set path properly.
-	file = path + video["title"] + video["author"]
+	file = path + rawVideo.Title + rawVideo.Author
 	if format == "mp3" {
 		file = file + ".mp3"
 
@@ -92,10 +92,10 @@ func main() {
 
 func usageAndExit(message string, exitCode int) {
 	if message != "" {
-		logrus.Infof(os.Stderr, message)
-		logrus.Infof(os.Stderr, "\n\n")
+		fmt.Fprintf(os.Stderr, message)
+		fmt.Fprintf(os.Stderr, "\n\n")
 	}
 	flag.Usage()
-	logrus.Infof(os.Stderr, "\n")
+	fmt.Fprintf(os.Stderr, "\n")
 	os.Exit(exitCode)
 }
