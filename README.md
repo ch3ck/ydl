@@ -27,12 +27,11 @@
 
 * [Go version 1.8](https://github.com/golang/go/releases/tag/go.1.8.3)
 * [Docker CE 17.06](https://docs.docker.com/release-notes/docker-ce/)
+* [FFMPEG](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg)
 
 Clone GIT repo and install some dependencies:
 ```
 $ git clone htps://github.com/Ch3ck/ytd
-$ go get -u google.golang.org/api/youtube/v3
-$ go get -u golang.org/x/oauth2/...
 $ go get -u github.com/Sirupsen/logrus/...
 
 ```
@@ -49,16 +48,18 @@ $ make
 
 On a Linux or OSX system
 ```
-$ ytd -h
+ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrlv0.1
+  -bitrate uint
+    	Audio Bitrate (default 123)
+  -format string
+    	File Format(mp3, webm, flv)
+  -id string
+    	Youtube Video ID
+  -path string
+    	Output Path (default ".")
+  -version
+    	print version and exit
 
-  -q or --query
-        Youtube search query
-  -k or --key
-        Youtube API token
-  -v or --version    print version and exit (shorthand)
-		prints ytd version and exits
-		
-$ ytd <link>
   searches for youtube video on that link and downloads
 ```
 Running `ytd` without any arguments will prompt for link.
@@ -68,7 +69,6 @@ Running `ytd` without any arguments will prompt for link.
 
 * Search for Youtube vidoes based on the Link and provides the download options for either mp3 or flv file.
 * Support HD Video download.
-* Support search with Youtube API, process results and user chooses whatever files to download.
 * Multithreaded downloads.
 * Web App(PWA, Basic JS Web UI).
 * Package for OSX, Android, iOS.
