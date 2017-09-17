@@ -28,7 +28,7 @@ const (
 //Youtube Downloader Data file.
 type RawVideoData struct {
 	Title                  string `json:"title"`
-	Author                 string `json:"author`
+	Author                 string `json:"author"`
 	Status                 string `json:"status"`
 	URLEncodedFmtStreamMap string `json:"url_encoded_fmt_stream_map"`
 }

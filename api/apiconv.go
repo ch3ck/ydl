@@ -50,7 +50,7 @@ func APIConvertVideo(file string, bitrate uint, id string, decVideo []string) er
 	} else {
 		out, err := os.Create(file)
 		if err != nil {
-			logrus.Errorf("Unable to download video file.", err)
+			logrus.Errorf("Unable to download video file: %v", err)
 			return err
 		}
 		err = apiDownloadVideo(id, out)
