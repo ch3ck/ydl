@@ -33,15 +33,17 @@ func TestApi(t *testing.T) {
 			t.Errorf("GetVideoId(%d): expected %q, actual %q", i, table.id, ID)
 		}
 
-		video, err := APIGetVideoStream(ID, rawVideo)
-		if err != nil {
-			t.Errorf("APIGetVideoStream(%d): expected %v, actual %v", i, nil, err)
-		}
+		if ID != "" {
+			video, err := APIGetVideoStream(ID, rawVideo)
+			if err != nil {
+				t.Errorf("APIGetVideoStream(%d): expected %v, actual %v", i, nil, err)
+			}
 
-		file := path + rawVideo.Title + rawVideo.Author
-		err = APIConvertVideo(file, 123, ID, video)
-		if err != nil {
-			t.Errorf("APIConvertVideo(%d): expected %v, actual %v", i, nil, err)
+			file := path + rawVideo.Title + rawVideo.Author
+			err = APIConvertVideo(file, 123, ID, video)
+			if err != nil {
+				t.Errorf("APIConvertVideo(%d): expected %v, actual %v", i, nil, err)
+			}
 		}
 	}
 }
