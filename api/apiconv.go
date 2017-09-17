@@ -32,7 +32,7 @@ func APIConvertVideo(file string, bitrate uint, id string, decVideo []string) er
 		file = file[:len(file)-4] + ".mp3"
 	}
 
-	logrus.Infof("Converting video to %q format", filepath.Ext(file))
+	//logrus.Infof("Converting video to %q format", filepath.Ext(file))
 	if filepath.Ext(file) == ".mp3" {
 		/* NOTE: To modify to use Go ffmpeg bindings or cgo */
 
@@ -44,7 +44,7 @@ func APIConvertVideo(file string, bitrate uint, id string, decVideo []string) er
 		}
 
 		cmd.Start()
-		logrus.Infof("Downloading mp3 file to disk %s", file)
+		//logrus.Infof("Downloading mp3 file to disk %s", file)
 		stdin.Write(buf.Bytes()) //download file.
 
 	} else {
@@ -62,7 +62,7 @@ func APIConvertVideo(file string, bitrate uint, id string, decVideo []string) er
 
 //Downloads decoded video stream.
 func apiDownloadVideo(url string, out io.Writer) error {
-	logrus.Infof("Downloading file stream")
+	//logrus.Infof("Downloading file stream")
 
 	resp, err := http.Get(videoExtractor + url)
 	if err != nil {
@@ -77,7 +77,7 @@ func apiDownloadVideo(url string, out io.Writer) error {
 		return fmt.Errorf("saving file: %s (%d bytes copied)", err, length)
 	}
 
-	logrus.Infof("Downloaded %d bytes", length)
+	//logrus.Infof("Downloaded %d bytes", length)
 
 	return nil
 }

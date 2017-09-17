@@ -100,7 +100,7 @@ func APIGetVideoStream(id string, video *RawVideoData) (videoData []string, err 
 
 		str, _ := json.Marshal(data)
 		decodedVideo = append(decodedVideo, string(str))
-		logrus.Infof("\nDecoded %d bytes of %q, in %q format", len(decodedVideo), dec_data.Get("quality"), dec_data.Get("format"))
+		//logrus.Infof("\nDecoded %d bytes of %q, in %q format", len(decodedVideo), dec_data.Get("quality"), dec_data.Get("format"))
 	}
 
 	return decodedVideo, nil

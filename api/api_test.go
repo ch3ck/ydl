@@ -63,7 +63,7 @@ func BenchmarkApiGetVideoStream(b *testing.B) {
 	}
 }
 
-func benchmarkApiConvertVideo(b *testing.B) {
+func BenchmarkApiConvertVideo(b *testing.B) {
 	path := "~/Downloads/"
 	for n := 0; n < b.N; n++ {
 		file := path + tables[0].id + ".mp3"
