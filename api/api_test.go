@@ -39,7 +39,7 @@ func TestApi(t *testing.T) {
 				t.Errorf("APIGetVideoStream(%d): expected %v, actual %v", i, nil, err)
 			}
 
-			file := path + rawVideo.Title + rawVideo.Author
+			file := path + table.url + ".mp3"
 			err = APIConvertVideo(file, 123, ID, video)
 			if err != nil {
 				t.Errorf("APIConvertVideo(%d): expected %v, actual %v", i, nil, err)

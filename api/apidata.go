@@ -89,18 +89,18 @@ func APIGetVideoStream(id string, video *RawVideoData) (videoData []string, err 
 		}
 
 		data := map[string]string{
-			"quality": dec_data["quality"][0],
-			"type":    dec_data["type"][0],
-			"url":     dec_data["url"][0],
-			"sig":     dec_data["sig"][0],
+			"quality": dec_data.Get("quality"),
+			"type":    dec_data.Get("type"),
+			"url":     dec_data.Get("url"),
+			"sig":     dec_data.Get("sig"),
 			"title":   video.Title,
 			"author":  video.Author,
-			"format":  dec_data["format"][0],
+			"format":  dec_data.Get("format"),
 		}
 
 		str, _ := json.Marshal(data)
 		decodedVideo = append(decodedVideo, string(str))
-		logrus.Infof("\nDecoded %d bytes of %q, in %q format", len(decodedVideo), dec_data["quality"][0], dec_data["format"][0])
+		logrus.Infof("\nDecoded %d bytes of %q, in %q format", len(decodedVideo), dec_data.Get("quality"), dec_data.Get("format"))
 	}
 
 	return decodedVideo, nil
