@@ -4,10 +4,10 @@
 PREFIX?=$(shell pwd)
 BUILDTAGS=
 
-.PHONY: clean all fmt vet lint build test install static
+.PHONY: clean all fmt vet build test install static
 .DEFAULT: default
 
-all: clean build fmt lint test vet install
+all: clean fmt vet build test install
 
 build:
 	@echo "+ $@"
@@ -22,11 +22,7 @@ fmt:
 	@echo "+ $@"
 	@gofmt -s -l . | grep -v vendor | tee /dev/stderr
 
-lint:
-	@echo "+ $@"
-	@golint ./... | grep -v vendor | tee /dev/stderr
-
-test: fmt lint vet
+test: fmt vet
 	@echo "+ $@"
 	@go test -v -tags "$(BUILDTAGS) cgo" $(shell go list ./... | grep -v vendor)
 	@go test -bench=. $(shell go list ./... | grep -v vendor)
