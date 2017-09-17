@@ -23,9 +23,11 @@ var tables = []struct {
 	{"https://vimeo.com/101522071", ""},
 }
 
+var vid []string
+
 func TestApi(t *testing.T) {
 
-	path := "~/Downloads/"
+	//path := "~/Downloads/"
 	for i, table := range tables {
 		var rawVideo *RawVideoData
 		ID, _ := GetVideoId(table.url)
@@ -34,16 +36,37 @@ func TestApi(t *testing.T) {
 		}
 
 		if ID != "" {
-			video, err := APIGetVideoStream(ID, rawVideo)
+			_ , err := APIGetVideoStream(ID, rawVideo)
 			if err != nil {
 				t.Errorf("APIGetVideoStream(%d): expected %v, actual %v", i, nil, err)
 			}
 
-			file := path + table.url + ".mp3"
+			/*file := path + table.id + ".mp3"
 			err = APIConvertVideo(file, 123, ID, video)
 			if err != nil {
 				t.Errorf("APIConvertVideo(%d): expected %v, actual %v", i, nil, err)
-			}
+			}*/
 		}
 	}
 }
+
+func BenchmarkGetVideoId(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		GetVideoId(tables[0].url)
+	}
+}
+
+func BenchmarkApiGetVideoStream(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		var rawVideo *RawVideoData
+		vid, _ = APIGetVideoStream(tables[0].id, rawVideo)
+	}
+}
+/*
+func benchmarkApiConvertVideo(b *testing.B) {
+	path := "~/Downloads/"
+	for n := 0; n < b.N; n++ {
+		file := path + tables[0].id + ".mp3"
+		APIConvertVideo(file, 123,tables[0].id, vid)
+	}
+} */
