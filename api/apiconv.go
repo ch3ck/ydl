@@ -22,7 +22,7 @@ import (
 
 //Converts Decoded Video file to mp3 by default with 123 bitrate or to
 //flv if otherwise specified and downloads to system
-func APIConvertVideo(file string, bitrate uint, id string, decVideo []string) error {
+func APIConvertVideo(file, id, format string, bitrate uint, decVideo []string) error {
 	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), file)
 	stdin, err := cmd.StdinPipe()
 	if err != nil {

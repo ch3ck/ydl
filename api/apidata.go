@@ -48,10 +48,10 @@ func GetVideoId(url string) (string, error) {
 }
 
 //Gets Video Info, Decode Video Info from a Video ID.
-func APIGetVideoStream(id string, video *RawVideoData) (videoData []string, err error) {
+func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 
-	video = new(RawVideoData) //raw video data
-	var decodedVideo []string //decoded video data
+	video := new(RawVideoData) //raw video data
+	var decodedVideo []string  //decoded video data
 
 	//Get Video Data stream
 	videoUrl := videoExtractor + id
@@ -69,7 +69,7 @@ func APIGetVideoStream(id string, video *RawVideoData) (videoData []string, err 
 	output, er := url.ParseQuery(string(out))
 	if e != nil {
 		logrus.Errorf("Error parsing video byte stream: %v", e)
-		return nil, e
+		return nil
 	}
 
 	//Process Video stream
@@ -103,5 +103,20 @@ func APIGetVideoStream(id string, video *RawVideoData) (videoData []string, err 
 		//logrus.Infof("\nDecoded %d bytes of %q, in %q format", len(decodedVideo), dec_data.Get("quality"), dec_data.Get("format"))
 	}
 
-	return decodedVideo, nil
+	//Convert and Download video data
+	//create output file name and set path properly.
+	file := path + video.Title + video.Author
+	if format == "mp3" {
+		file = file + ".mp3"
+
+	} else { //defaults to flv format for video files.)
+		file = file + ".flv"
+	}
+
+	err = APIConvertVideo(file, id, format, bitrate, decodedVideo)
+	if err != nil {
+		logrus.Errorf("Error downloading video: %v", err)
+	}
+
+	return nil
 }

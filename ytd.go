@@ -9,7 +9,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	_ "net/http/pprof"
 	"os"
+	"runtime"
+	"runtime/pprof"
 
 	"github.com/Ch3ck/ytd/api"
 	"github.com/Sirupsen/logrus"
@@ -18,7 +21,7 @@ import (
 const (
 
 	//BANNER for ytd which prints the help info
-	BANNER = "ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrl%s\n"
+	BANNER = "ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrl %s\n"
 	//VERSION which prints the ytd version.
 	VERSION = "v0.1"
 )
@@ -29,8 +32,9 @@ var (
 	format  string
 	path    string
 	bitrate uint
-	file    string
 )
+
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 
 func init() {
 	// parse flags
@@ -46,7 +50,6 @@ func init() {
 	}
 
 	flag.Parse()
-
 	if version {
 		logrus.Infof("%s", VERSION)
 		os.Exit(0)
@@ -55,11 +58,18 @@ func init() {
 
 func main() {
 	var ID string
-	var rawVideo *api.RawVideoData
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			logrus.Fatalf("%v", err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
+	runtime.SetBlockProfileRate(20)
 	if len(os.Args) == 1 {
 		usageAndExit(BANNER, -1)
 	}
-
 	//Get Video Id
 	if id == "" {
 		url := os.Args[1]
@@ -69,24 +79,8 @@ func main() {
 	}
 
 	//Extract Video data and decode
-	video, err := api.APIGetVideoStream(ID, rawVideo)
-	if err != nil {
+	if err := api.APIGetVideoStream(format, ID, path, bitrate); err != nil {
 		logrus.Errorf("Error decoding Video stream: %v", err)
-	}
-
-	//Convert and Download video data
-	//create output file name and set path properly.
-	file = path + rawVideo.Title + rawVideo.Author
-	if format == "mp3" {
-		file = file + ".mp3"
-
-	} else { //defaults to flv format for video files.)
-		file = file + ".flv"
-	}
-
-	err = api.APIConvertVideo(file, bitrate, ID, video)
-	if err != nil {
-		logrus.Errorf("Error downloading video: %v", err)
 	}
 }
 

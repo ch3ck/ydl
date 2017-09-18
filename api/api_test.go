@@ -11,8 +11,7 @@ import (
 )
 
 var tables = []struct {
-	url string // input
-	id  string // expected result
+	url, id string // input
 }{
 	{"https://www.youtube.com/watch?v=HpNluHOAJFA&list=RDHpNluHOAJFA", "HpNluHOAJFA"},
 	{"https://www.youtube.com/watch?v=jOWsu8ePrbE&list=RDHpNluHOAJFA&index=8", "jOWsu8ePrbE"},
@@ -29,22 +28,14 @@ func TestApi(t *testing.T) {
 
 	path := "~/Downloads/"
 	for i, table := range tables {
-		var rawVideo *RawVideoData
 		ID, _ := GetVideoId(table.url)
 		if ID != table.id {
 			t.Errorf("GetVideoId(%d): expected %q, actual %q", i, table.id, ID)
 		}
 
 		if ID != "" {
-			video, err := APIGetVideoStream(ID, rawVideo)
-			if err != nil {
+			if err := APIGetVideoStream("mp3", ID, path, 123); err != nil {
 				t.Errorf("APIGetVideoStream(%d): expected %v, actual %v", i, nil, err)
-			}
-
-			file := path + table.id + ".mp3"
-			err = APIConvertVideo(file, 123, ID, video)
-			if err != nil {
-				t.Errorf("APIConvertVideo(%d): expected %v, actual %v", i, nil, err)
 			}
 		}
 	}
@@ -58,15 +49,14 @@ func BenchmarkGetVideoId(b *testing.B) {
 
 func BenchmarkApiGetVideoStream(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		var rawVideo *RawVideoData
-		vid, _ = APIGetVideoStream(tables[0].id, rawVideo)
+		APIGetVideoStream("mp3", tables[0].id, "~/Downloads", 123)
 	}
 }
 
-func BenchmarkApiConvertVideo(b *testing.B) {
+/*func BenchmarkApiConvertVideo(b *testing.B) {
 	path := "~/Downloads/"
 	for n := 0; n < b.N; n++ {
 		file := path + tables[0].id + ".mp3"
 		APIConvertVideo(file, 123, tables[0].id, vid)
 	}
-}
+}*/
