@@ -22,7 +22,7 @@ const (
 	audioBitRate = 123 //default audio bit rate.
 
 	//Video extractor
-	videoExtractor = "http://youtube.com/get_video_info?video_id="
+	videoExtractor = "https://youtube.com/get_video_info?video_id="
 )
 
 //Youtube Downloader Data file.
