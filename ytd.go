@@ -67,7 +67,7 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 	runtime.SetBlockProfileRate(20)
-	
+
 	if path == "" {
 		path, _ = os.Getwd()
 	}

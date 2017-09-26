@@ -7,8 +7,8 @@
 package api
 
 import (
-	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -25,12 +25,17 @@ const (
 	videoExtractor = "https://youtube.com/get_video_info?video_id="
 )
 
+type stream map[string]string
+
 //Youtube Downloader Data file.
 type RawVideoData struct {
-	Title                  string `json:"title"`
-	Author                 string `json:"author"`
-	Status                 string `json:"status"`
-	URLEncodedFmtStreamMap string `json:"url_encoded_fmt_stream_map"`
+	Title                  string   `json:"title"`
+	Author                 string   `json:"author"`
+	Status                 string   `json:"status"`
+	URLEncodedFmtStreamMap []stream `json:"url_encoded_fmt_stream_map"`
+	VideoId                string
+	VideoInfo              string
+	Vlength                float64
 }
 
 //gets the Video ID from youtube url
@@ -54,7 +59,9 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 	var decodedVideo []string  //decoded video data
 
 	//Get Video Data stream
+	video.VideoId = id
 	videoUrl := videoExtractor + id
+	video.VideoInfo = videoUrl
 	resp, er := http.Get(videoUrl)
 	if er != nil {
 		logrus.Errorf("Error in GET request: %v", er)
@@ -72,50 +79,79 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 		return nil
 	}
 
-	//Process Video stream
-	video.URLEncodedFmtStreamMap = output.Get("url_encoded_fmt_stream_map")
-	video.Author = output.Get("author")
-	video.Title = output.Get("title")
-	video.Status = output.Get("status")
-
-	//Decode Video
-	outputStreams := strings.Split(video.URLEncodedFmtStreamMap, ",")
-	for cur, raw_data := range outputStreams {
-		//decoding raw data stream
-		dec_data, err := url.ParseQuery(raw_data)
-		if err != nil {
-			logrus.Errorf("Error Decoding Video data: %d, %v", cur, err)
-			continue
+	status, ok := output["status"]
+	if !ok {
+		err = fmt.Errorf("No response status in server")
+		return err
+	}
+	if status[0] == "fail" {
+		reason, ok := answer["reason"]
+		if ok {
+			err = fmt.Errorf("'fail' response status found in the server, reason: '%s'", reason[0])
+		} else {
+			err = errors.New(fmt.Sprint("'fail' response status found in the server, no reason given"))
 		}
-
-		data := map[string]string{
-			"quality": dec_data.Get("quality"),
-			"type":    dec_data.Get("type"),
-			"url":     dec_data.Get("url"),
-			"sig":     dec_data.Get("sig"),
-			"title":   video.Title,
-			"author":  video.Author,
-			"format":  dec_data.Get("format"),
-		}
-
-		str, _ := json.Marshal(data)
-		decodedVideo = append(decodedVideo, string(str))
-		//logrus.Infof("\nDecoded %d bytes of %q, in %q format", len(decodedVideo), dec_data.Get("quality"), dec_data.Get("format"))
+		return err
+	}
+	if status[0] != "ok" {
+		err = fmt.Errorf("non-success response status found in the server (status: '%s')", status)
+		return err
 	}
 
-	//Convert and Download video data
+	// read the streams map
+	video.Author = output["author"][0]
+	video.Title = output["title"][0]
+	video.URLEncodedFmtStreamMap, ok = output.Get("url_encoded_fmt_stream_map")
+	if !ok {
+		err = errors.New(fmt.Sprint("no stream map found in the server"))
+		return err
+	}
+
+	// read and decode streams.
+	streamsList := strings.Split(video.URLEncodedFmtStreamMap[0], ",")
+	var streams []stream
+	for streamPos, streamRaw := range streamsList {
+		streamQry, err := url.ParseQuery(streamRaw)
+		if err != nil {
+			logrus.Infof("An error occured while decoding one of the video's streams: stream %d: %s\n", streamPos, err)
+			continue
+		}
+		var sig string
+		if _, exist := streamQry["sig"]; exist {
+			sig = streamQry["sig"][0]
+		}
+
+		streams = append(streams, stream{
+			"quality": streamQry["quality"][0],
+			"type":    streamQry["type"][0],
+			"url":     streamQry["url"][0],
+			"sig":     sig,
+			"title":   output["title"][0],
+			"author":  output["author"][0],
+		})
+		logrus.Infof("Stream found: quality '%s', format '%s'", streamQry["quality"][0], streamQry["type"][0])
+	}
+
+	video.URLEncodedFmtStreamMap = streams
+	//Download Video stream to file
+	vstream := streams[0]
+	url := vstream["url"] + "&signature" + vstream["sig"]
+	logrus.Infof("Downloading file to %s", file)
+
 	//create output file name and set path properly.
 	file := path + video.Title + video.Author
 	if format == "mp3" {
 		file = file + ".mp3"
+		err = ApiConvertVideo(file, id, format, bitrate, decodedVideo)
+		if err != nil {
+			logrus.Errorf("Error downloading audio: %v", err)
+		}
 
 	} else { //defaults to flv format for video files.)
 		file = file + ".flv"
-	}
-
-	err = APIConvertVideo(file, id, format, bitrate, decodedVideo)
-	if err != nil {
-		logrus.Errorf("Error downloading video: %v", err)
+		if err := ApiDownloadVideo(file, url, video); err != nil {
+			logrus.Errorf("Error downloading video: %v", v)
+		}
 	}
 
 	return nil
