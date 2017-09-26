@@ -148,7 +148,7 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 	video.URLEncodedFmtStreamMap = streams
 
 	//create output file name and set path properly.
-	file := path + "/" + video.Title + video.Author
+	file := video.Title + video.Author
 
 	//Download Video stream to file
 	vstream := streams[0]
@@ -163,7 +163,7 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 
 	} else { //defaults to flv format for video files.)
 		file = file + ".flv"
-		if err := ApiDownloadVideo(file, url, video); err != nil {
+		if err := ApiDownloadVideo(path, file, url, video); err != nil {
 			logrus.Errorf("Error downloading video: %v", err)
 		}
 	}

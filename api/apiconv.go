@@ -51,7 +51,7 @@ func ApiConvertVideo(file, id, format string, bitrate uint, decVideo []string) e
 }
 
 //Downloads decoded video stream.
-func ApiDownloadVideo(file string, url string, video *RawVideoData) error {
+func ApiDownloadVideo(path, file, url string, video *RawVideoData) error {
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Printf("Http.Get\nerror: %s\nURL: %s\n", err, url)
