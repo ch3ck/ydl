@@ -36,6 +36,19 @@ type RawVideoData struct {
 	VideoId                string
 	VideoInfo              string
 	Vlength                float64
+	dpercent			   chan int64
+}
+
+func (v *RawVideoData) Write(b []byte) (n int, err error) {
+	n = len(b)
+	totalbytes , dlevel := 0.0, 0.0
+	v.Vlength = totalbytes + float64(n)
+	curPercent := ((totalbytes / v.Vlength) * 100)
+	if (dlevel <= curPercent) && (dlevel  < 100) {
+		dlevel++
+		v.dpercent <- int64(dlevel)
+	}
+	return
 }
 
 //gets the Video ID from youtube url
@@ -85,7 +98,7 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 		return err
 	}
 	if status[0] == "fail" {
-		reason, ok := answer["reason"]
+		reason, ok := output["reason"]
 		if ok {
 			err = fmt.Errorf("'fail' response status found in the server, reason: '%s'", reason[0])
 		} else {
@@ -101,14 +114,14 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 	// read the streams map
 	video.Author = output["author"][0]
 	video.Title = output["title"][0]
-	video.URLEncodedFmtStreamMap, ok = output.Get("url_encoded_fmt_stream_map")
+	StreamMap, ok := output["url_encoded_fmt_stream_map"]
 	if !ok {
-		err = errors.New(fmt.Sprint("no stream map found in the server"))
+		err = fmt.Errorf("Error reading encoded stream map.")
 		return err
 	}
 
 	// read and decode streams.
-	streamsList := strings.Split(video.URLEncodedFmtStreamMap[0], ",")
+	streamsList := strings.Split(string(StreamMap[0]), ",")
 	var streams []stream
 	for streamPos, streamRaw := range streamsList {
 		streamQry, err := url.ParseQuery(streamRaw)
@@ -133,13 +146,14 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 	}
 
 	video.URLEncodedFmtStreamMap = streams
+
+	//create output file name and set path properly.
+	file := path + "/" + video.Title + video.Author
+
 	//Download Video stream to file
 	vstream := streams[0]
 	url := vstream["url"] + "&signature" + vstream["sig"]
 	logrus.Infof("Downloading file to %s", file)
-
-	//create output file name and set path properly.
-	file := path + video.Title + video.Author
 	if format == "mp3" {
 		file = file + ".mp3"
 		err = ApiConvertVideo(file, id, format, bitrate, decodedVideo)
@@ -150,7 +164,7 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 	} else { //defaults to flv format for video files.)
 		file = file + ".flv"
 		if err := ApiDownloadVideo(file, url, video); err != nil {
-			logrus.Errorf("Error downloading video: %v", v)
+			logrus.Errorf("Error downloading video: %v", err)
 		}
 	}
 

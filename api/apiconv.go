@@ -23,14 +23,13 @@ import (
 //flv if otherwise specified and downloads to system
 func ApiConvertVideo(file, id, format string, bitrate uint, decVideo []string) error {
 	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), file)
-	err = os.MkdirAll(filepath.Dir(file), 666)
-	if err != nil {
+	/* if err := os.MkdirAll(filepath.Dir(file), 666); err != nil {
 		return err
 	}
 	out, err := os.Create(file)
 	if err != nil {
 		return err
-	}
+	} */
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -62,7 +61,7 @@ func ApiDownloadVideo(file string, url string, video *RawVideoData) error {
 	video.Vlength = float64(resp.ContentLength)
 
 	if resp.StatusCode != 200 {
-		log.Printf("Reading Output: status code : '%v'", resp.StatusCode, err)
+		log.Printf("Reading Output: status code : '%v'", resp.StatusCode)
 		return errors.New("non 200 status code received")
 	}
 	err = os.MkdirAll(filepath.Dir(file), 666)
