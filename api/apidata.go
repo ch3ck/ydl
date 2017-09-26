@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"unicode"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -36,15 +37,15 @@ type RawVideoData struct {
 	VideoId                string
 	VideoInfo              string
 	Vlength                float64
-	dpercent			   chan int64
+	dpercent               chan int64
 }
 
 func (v *RawVideoData) Write(b []byte) (n int, err error) {
 	n = len(b)
-	totalbytes , dlevel := 0.0, 0.0
+	totalbytes, dlevel := 0.0, 0.0
 	v.Vlength = totalbytes + float64(n)
 	curPercent := ((totalbytes / v.Vlength) * 100)
-	if (dlevel <= curPercent) && (dlevel  < 100) {
+	if (dlevel <= curPercent) && (dlevel < 100) {
 		dlevel++
 		v.dpercent <- int64(dlevel)
 	}
@@ -146,27 +147,39 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 	}
 
 	video.URLEncodedFmtStreamMap = streams
-
-	//create output file name and set path properly.
-	file := video.Title + video.Author
-
 	//Download Video stream to file
+	if format == "" {
+		format = ".flv"
+	} else {
+		format = ".mp3"
+	}
+	//create output file name and set path properly.
+	file := video.Title + format
+	file = SpaceMap(file)
 	vstream := streams[0]
 	url := vstream["url"] + "&signature" + vstream["sig"]
 	logrus.Infof("Downloading file to %s", file)
-	if format == "mp3" {
-		file = file + ".mp3"
+	if format == ".mp3" {
 		err = ApiConvertVideo(file, id, format, bitrate, decodedVideo)
 		if err != nil {
 			logrus.Errorf("Error downloading audio: %v", err)
 		}
 
 	} else { //defaults to flv format for video files.)
-		file = file + ".flv"
 		if err := ApiDownloadVideo(path, file, url, video); err != nil {
 			logrus.Errorf("Error downloading video: %v", err)
 		}
 	}
 
 	return nil
+}
+
+//remove whitespaces in filename
+func SpaceMap(str string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return -1
+		}
+		return r
+	}, str)
 }
