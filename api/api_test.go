@@ -26,7 +26,7 @@ var vid []string
 
 func TestApi(t *testing.T) {
 
-	path := "$HOME/Downloads/"
+	path := "test"
 	for i, table := range tables {
 		ID, _ := GetVideoId(table.url)
 		if ID != table.id {

@@ -16,16 +16,28 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 )
 
 //Downloads decoded audio stream
-func ApiConvertVideo(file, id, format string, bitrate uint, decStream []stream) error {
+func ApiConvertVideo(file, id, path string, bitrate uint, decStream []stream) error {
 	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), file)
-	if err := os.MkdirAll(filepath.Dir(file), 666); err != nil {
+
+	curDir, er := user.Current()
+	if er != nil {
+		return er
+	}
+
+	homeDir := curDir.HomeDir
+	dir := homeDir + "/Downloads/youtube-dl/" + path
+	fp := filepath.Join(dir, file)
+	if err := os.MkdirAll(filepath.Dir(fp), 0775); err != nil {
 		return err
 	}
-	out, err := os.Create(file)
+	
+	os.Remove(fp)//delete if file exists.
+	out, err := os.Create(fp)
 	if err != nil {
 		return err
 	}
@@ -60,11 +72,20 @@ func ApiDownloadVideo(path, file, url string) error {
 		log.Printf("Reading Output: status code: '%v'", resp.StatusCode)
 		return errors.New("Non 200 status code received")
 	}
-	err = os.MkdirAll(filepath.Dir(file), 666)
+
+	curDir, er := user.Current()
+	if er != nil {
+		return er
+	}
+	homeDir := curDir.HomeDir
+	dir := homeDir + "/Downloads/youtube-dl/" + path
+	fp := filepath.Join(dir, file)
+	err = os.MkdirAll(filepath.Dir(fp), 0775)
 	if err != nil {
 		return err
 	}
-	out, err := os.Create(file)
+	os.Remove(fp)//delete if file exists
+	out, err := os.Create(fp)
 	if err != nil {
 		return err
 	}

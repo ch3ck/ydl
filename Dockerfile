@@ -10,7 +10,7 @@ COPY Makefile	Makefile
 COPY ytd.go		.
 
 RUN gofmt -l -d $(find . -type f -name '*.go' -not -path "./vendor/*") \
-  && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ytd .
+  && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o youtube-dl .
 
 
 FROM alpine:latest
@@ -29,4 +29,4 @@ COPY --from=0 /go/src/github.com/Ch3ck/youtube-dl .
 RUN echo "Image build complete."
 
 
-ENTRYPOINT [ "youtube-dl" ]
+CMD [ "./youtube-dl" ]
