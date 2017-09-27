@@ -72,8 +72,7 @@ func ApiDownloadVideo(path, file, url string, video *RawVideoData) error {
 	if err != nil {
 		return err
 	}
-	mw := io.MultiWriter(out, video)
-	_, err = io.Copy(mw, resp.Body)
+	_, err = io.Copy(out, resp.Body)
 	if err != nil {
 		log.Println("Download Error: ", err)
 		return err
