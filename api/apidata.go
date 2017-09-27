@@ -36,20 +36,6 @@ type RawVideoData struct {
 	URLEncodedFmtStreamMap []stream `json:"url_encoded_fmt_stream_map"`
 	VideoId                string
 	VideoInfo              string
-	Vlength                float64
-	dpercent               chan int64
-}
-
-func (v *RawVideoData) Write(b []byte) (n int, err error) {
-	n = len(b)
-	totalbytes, dlevel := 0.0, 0.0
-	v.Vlength = totalbytes + float64(n)
-	curPercent := ((totalbytes / v.Vlength) * 100)
-	if (dlevel <= curPercent) && (dlevel < 100) {
-		dlevel++
-		v.dpercent <- int64(dlevel)
-	}
-	return
 }
 
 //gets the Video ID from youtube url
@@ -148,11 +134,12 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 
 	video.URLEncodedFmtStreamMap = streams
 	//Download Video stream to file
-	if format == "" {
-		format = ".flv"
-	} else {
+	if format == "mp3" || format == ".mp3" {
 		format = ".mp3"
+	} else {
+		format = ".flv"
 	}
+	
 	//create output file name and set path properly.
 	file := video.Title + format
 	file = SpaceMap(file)
@@ -165,7 +152,7 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 			logrus.Errorf("Error downloading audio: %v", err)
 		}
 
-	} else { //defaults to flv format for video files.)
+	} else {
 		if err := ApiDownloadVideo(path, file, url, video); err != nil {
 			logrus.Errorf("Error downloading video: %v", err)
 		}
