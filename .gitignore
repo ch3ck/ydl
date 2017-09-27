@@ -3,6 +3,9 @@
 *.a
 *.so
 
+ytd
+youtube-dl
+
 # Folders
 _obj
 _test
