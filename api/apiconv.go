@@ -23,13 +23,13 @@ import (
 //flv if otherwise specified and downloads to system
 func ApiConvertVideo(file, id, format string, bitrate uint, decVideo []string) error {
 	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), file)
-	/* if err := os.MkdirAll(filepath.Dir(file), 666); err != nil {
+	if err := os.MkdirAll(filepath.Dir(file), 666); err != nil {
 		return err
 	}
 	out, err := os.Create(file)
 	if err != nil {
 		return err
-	} */
+	}
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -46,7 +46,7 @@ func ApiConvertVideo(file, id, format string, bitrate uint, decVideo []string) e
 	cmd.Start()
 	//logrus.Infof("Downloading mp3 file to disk %s", file)
 	stdin.Write(buf.Bytes()) //download file.
-
+	out.Write(buf.Bytes())
 	return nil
 }
 
