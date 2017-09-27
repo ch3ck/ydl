@@ -9,7 +9,7 @@ BUILDTAGS=
 
 all: clean fmt vet build test install
 
-build:
+build: fmt vet
 	@echo "+ $@"
 	@go build -tags "$(BUILDTAGS) cgo" . ## Thinking of downloading the required go deps in here.
 	#@docker build -t ch3ck/ytd:v1 . Disable docker build.
@@ -20,11 +20,13 @@ static:
 
 fmt:
 	@echo "+ $@"
-	@gofmt -s -l . | grep -v vendor | tee /dev/stderr
+	@gofmt -s -l -w . | grep -v vendor | tee /dev/stderr
 
-test: fmt vet
+test:
 	@echo "+ $@"
+	@find . -name \*.mp3 -delete #clean previous test files.
 	@go test -v -tags "$(BUILDTAGS) cgo" $(shell go list ./... | grep -v vendor)
+	@find . -name \*.mp3 -delete # clean previous test downloads
 	@go test -bench=. $(shell go list ./... | grep -v vendor)
 
 vet:
@@ -34,6 +36,8 @@ vet:
 clean:
 	@echo "+ $@"
 	@rm -rf ytd
+	@find . -name \*.mp3 -delete
+	@find . -name \*.flv -delete
 
 install:
 	@echo "+ $@"
