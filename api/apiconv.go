@@ -20,7 +20,7 @@ import (
 )
 
 //Downloads decoded audio stream
-func ApiConvertVideo(file, id, format string, bitrate uint, decVideo []string) error {
+func ApiConvertVideo(file, id, format string, bitrate uint, decStream []stream) error {
 	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), file)
 	if err := os.MkdirAll(filepath.Dir(file), 666); err != nil {
 		return err
@@ -36,7 +36,7 @@ func ApiConvertVideo(file, id, format string, bitrate uint, decVideo []string) e
 	}
 
 	buf := &bytes.Buffer{}
-	gob.NewEncoder(buf).Encode(decVideo)
+	gob.NewEncoder(buf).Encode(decStream)
 	_, err = exec.LookPath("ffmpeg")
 	if err != nil {
 		return errors.New("ffmpeg not found on system")
@@ -48,14 +48,13 @@ func ApiConvertVideo(file, id, format string, bitrate uint, decVideo []string) e
 }
 
 //Downloads decoded video stream.
-func ApiDownloadVideo(path, file, url string, video *RawVideoData) error {
+func ApiDownloadVideo(path, file, url string) error {
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Printf("Http.Get\nerror: %s\nURL: %s\n", err, url)
 		return err
 	}
 	defer resp.Body.Close()
-	video.Vlength = float64(resp.ContentLength)
 
 	if resp.StatusCode != 200 {
 		log.Printf("Reading Output: status code: '%v'", resp.StatusCode)

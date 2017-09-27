@@ -56,7 +56,7 @@ func GetVideoId(url string) (string, error) {
 func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 
 	video := new(RawVideoData) //raw video data
-	var decodedVideo []string  //decoded video data
+	var streams []stream       //decoded video data
 
 	//Get Video Data stream
 	video.VideoId = id
@@ -109,7 +109,6 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 
 	// read and decode streams.
 	streamsList := strings.Split(string(StreamMap[0]), ",")
-	var streams []stream
 	for streamPos, streamRaw := range streamsList {
 		streamQry, err := url.ParseQuery(streamRaw)
 		if err != nil {
@@ -139,7 +138,7 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 	} else {
 		format = ".flv"
 	}
-	
+
 	//create output file name and set path properly.
 	file := video.Title + format
 	file = SpaceMap(file)
@@ -147,13 +146,13 @@ func APIGetVideoStream(format, id, path string, bitrate uint) (err error) {
 	url := vstream["url"] + "&signature" + vstream["sig"]
 	logrus.Infof("Downloading file to %s", file)
 	if format == ".mp3" {
-		err = ApiConvertVideo(file, id, format, bitrate, decodedVideo)
+		err = ApiConvertVideo(file, id, format, bitrate, streams)
 		if err != nil {
 			logrus.Errorf("Error downloading audio: %v", err)
 		}
 
 	} else {
-		if err := ApiDownloadVideo(path, file, url, video); err != nil {
+		if err := ApiDownloadVideo(path, file, url); err != nil {
 			logrus.Errorf("Error downloading video: %v", err)
 		}
 	}
