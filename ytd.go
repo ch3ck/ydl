@@ -14,7 +14,7 @@ import (
 	"runtime"
 	"runtime/pprof"
 
-	"github.com/Ch3ck/ytd/api"
+	"github.com/Ch3ck/youtube-dl/api"
 	"github.com/Sirupsen/logrus"
 )
 
