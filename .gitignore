@@ -3,8 +3,18 @@
 *.a
 *.so
 
+# Ignore all downloaded video and audio files
+*.mp3
+*.flv
+*.webm
+*.opus
+*.mp4
+*.3gpp
+*.ogg
+
+# Compiled binaries
 ytd
-youtube-dl
+youtube-dld
 
 # Folders
 _obj
