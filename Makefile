@@ -12,7 +12,7 @@ all: clean fmt vet build test install
 build: fmt vet
 	@echo "+ $@"
 	@go build -tags "$(BUILDTAGS) cgo" . ## Thinking of downloading the required go deps in here.
-	#@docker build -t ch3ck/ytd:v1 . Disable docker build.
+	@docker build -t ch3ck/ytd:v1 . 
 
 static:
 	@echo "+ $@"
