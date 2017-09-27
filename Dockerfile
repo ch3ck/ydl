@@ -5,7 +5,9 @@ RUN mkdir -p /go/src/github.com/Ch3ck/youtube-dl/
 WORKDIR /go/src/github.com/Ch3ck/youtube-dl
 
 COPY vendor     vendor
-COPY ytd.go  .
+COPY api		api
+COPY Makefile	Makefile
+COPY ytd.go		.
 
 RUN gofmt -l -d $(find . -type f -name '*.go' -not -path "./vendor/*") \
   && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ytd .
@@ -18,24 +20,13 @@ MAINTAINER Nyah Check <check.nyah@gmail.com>
 ENV PATH /go/bin:/usr/local/go/bin:$PATH
 ENV GOPATH /go
 
-RUN	apk add --no-cache add ca-certificates
+RUN	apk add --no-cache \
+	ca-certificates
 
 WORKDIR /root/
-COPY --from=0 /go/src/github.com/Ch3ck/ytd .
+COPY --from=0 /go/src/github.com/Ch3ck/youtube-dl .
 
-RUN set -x \
-	&& apk add --no-cache --virtual .build-deps \
-		go \
-		git \
-		gcc \
-		libc-dev \
-		libgcc \
-		ffmpeg \
-	&& cd /go/src/github.com/Ch3ck/ytd \
-	&& go build -o /usr/bin/ytd . \
-	&& apk del .build-deps \
-	&& rm -rf /go \
-	&& echo "Build complete."
+RUN echo "Image build complete."
 
 
-CMD [ "./ytd" ]
+ENTRYPOINT [ "youtube-dl" ]
