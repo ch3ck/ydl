@@ -8,20 +8,32 @@ package api
 import (
 	"bufio"
 	"bytes"
-	"encoding/gob"
 	"errors"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/viert/lame"
 )
 
 //Downloads decoded audio stream
-func ApiConvertVideo(file, path string, bitrate uint, decStream []stream) error {
+func ApiConvertVideo(file, path string, bitrate uint, url string) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Printf("Http.Get\nerror: %s\nURL: %s\n", err, url)
+		return err
+	}
+	defer resp.Body.Close()
+
+	data, e := ioutil.ReadAll(resp.Body)
+	if e != nil {
+		logrus.Errorf("Error reading video data: %v", e)
+	}
 
 	curDir, er := user.Current()
 	if er != nil {
@@ -41,10 +53,8 @@ func ApiConvertVideo(file, path string, bitrate uint, decStream []stream) error 
 		return err
 	}
 	defer out.Close()
-	buf := &bytes.Buffer{}
-	gob.NewEncoder(buf).Encode(decStream)
-	reader := bufio.NewReader(buf)
-
+	r := bytes.NewReader(data)
+	reader := bufio.NewReader(r)
 	audioWriter := lame.NewWriter(out)
 	audioWriter.Encoder.SetBitrate(int(bitrate))
 	audioWriter.Encoder.SetQuality(1)
