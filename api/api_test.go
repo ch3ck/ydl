@@ -34,7 +34,7 @@ func TestApi(t *testing.T) {
 		}
 
 		if ID != "" {
-			if err := APIGetVideoStream("mp3", ID, path, 123); err != nil {
+			if err := APIGetVideoStream("mp3", ID, path, 192); err != nil {
 				t.Errorf("APIGetVideoStream(%d): expected %v, actual %v", i, nil, err)
 			}
 		}
@@ -49,7 +49,7 @@ func BenchmarkGetVideoId(b *testing.B) {
 
 func BenchmarkApiGetVideoStream(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		APIGetVideoStream("mp3", tables[0].id, "~/Downloads", 123)
+		APIGetVideoStream("mp3", tables[0].id, "~/Downloads", 192)
 	}
 }
 

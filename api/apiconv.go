@@ -1,28 +1,27 @@
 // Copyright 2017 YTD Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
-
 // apiconv: Converts Decoded Video data to MP3, WEBM or MP4.
 // NOTE: To reimplement using Go ffmpeg bindings.
 package api
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/gob"
 	"errors"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"os/user"
 	"path/filepath"
+
+	"github.com/viert/lame"
 )
 
 //Downloads decoded audio stream
-func ApiConvertVideo(file, id, path string, bitrate uint, decStream []stream) error {
-	cmd := exec.Command("ffmpeg", "-i", "-", "-ab", fmt.Sprintf("%dk", bitrate), file)
+func ApiConvertVideo(file, path string, bitrate uint, decStream []stream) error {
 
 	curDir, er := user.Current()
 	if er != nil {
@@ -35,27 +34,25 @@ func ApiConvertVideo(file, id, path string, bitrate uint, decStream []stream) er
 	if err := os.MkdirAll(filepath.Dir(fp), 0775); err != nil {
 		return err
 	}
-	
-	os.Remove(fp)//delete if file exists.
+
+	os.Remove(fp) //delete if file exists.
 	out, err := os.Create(fp)
 	if err != nil {
 		return err
 	}
-
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		return err
-	}
-
+	defer out.Close()
 	buf := &bytes.Buffer{}
 	gob.NewEncoder(buf).Encode(decStream)
-	_, err = exec.LookPath("ffmpeg")
-	if err != nil {
-		return errors.New("ffmpeg not found on system")
-	}
-	cmd.Start()
-	stdin.Write(buf.Bytes())
-	out.Write(buf.Bytes())
+	reader := bufio.NewReader(buf)
+
+	audioWriter := lame.NewWriter(out)
+	audioWriter.Encoder.SetBitrate(int(bitrate))
+	audioWriter.Encoder.SetQuality(1)
+
+	// IMPORTANT!
+	audioWriter.Encoder.InitParams()
+	reader.WriteTo(audioWriter)
+
 	return nil
 }
 
@@ -84,7 +81,7 @@ func ApiDownloadVideo(path, file, url string) error {
 	if err != nil {
 		return err
 	}
-	os.Remove(fp)//delete if file exists
+	os.Remove(fp) //delete if file exists
 	out, err := os.Create(fp)
 	if err != nil {
 		return err

@@ -11,8 +11,7 @@ all: clean fmt vet build test install
 
 build: fmt vet
 	@echo "+ $@"
-	@go build -tags "$(BUILDTAGS) cgo" . ## Thinking of downloading the required go deps in here.
-	@docker build -t ch3ck/ytd:v1 . 
+	@go build -tags "$(BUILDTAGS) cgo" .
 
 static:
 	@echo "+ $@"
@@ -41,4 +40,5 @@ clean:
 
 install:
 	@echo "+ $@"
+	@docker build -t ch3ck/ytd:v1 . 
 	@go install .

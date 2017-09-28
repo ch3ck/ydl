@@ -27,12 +27,11 @@
 
 * [Go version 1.8](https://github.com/golang/go/releases/tag/go.1.8.3)
 * [Docker CE 17.06](https://docs.docker.com/release-notes/docker-ce/)
-* [FFMPEG](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg)
+* [Lame](https://sourceforge.net/projects/lame/)
 
 Clone GIT repo and install some dependencies:
 ```
-$ git clone htps://github.com/Ch3ck/ytd
-$ go get -u github.com/Sirupsen/logrus/...
+$ git clone htps://github.com/Ch3ck/youtube-dl
 
 ```
 

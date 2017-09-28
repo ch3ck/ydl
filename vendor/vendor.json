@@ -9,6 +9,12 @@
 			"revisionTime": "2017-08-22T13:27:46Z"
 		},
 		{
+			"checksumSHA1": "IkTjFzcMV1yg/XU7DDf1+t0sxA8=",
+			"path": "github.com/viert/lame",
+			"revision": "22dec15dcdfdf25edd523b99757f5b185211e723",
+			"revisionTime": "2017-04-19T10:49:42Z"
+		},
+		{
 			"checksumSHA1": "nqWNlnMmVpt628zzvyo6Yv2CX5Q=",
 			"path": "golang.org/x/crypto/ssh/terminal",
 			"revision": "7d9177d70076375b9a59c8fde23d52d9c4a7ecd5",
@@ -27,5 +33,5 @@
 			"revisionTime": "2017-09-12T16:19:26Z"
 		}
 	],
-	"rootPath": "github.com/Ch3ck/ytd"
+	"rootPath": "github.com/Ch3ck/youtube-dl"
 }

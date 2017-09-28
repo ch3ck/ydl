@@ -42,7 +42,7 @@ func init() {
 	flag.StringVar(&format, "format", "", "File Format(mp3, webm, flv)")
 	flag.StringVar(&path, "path", ".", "Output Path")
 	flag.BoolVar(&version, "version", false, "print version and exit")
-	flag.UintVar(&bitrate, "bitrate", 123, "Audio Bitrate")
+	flag.UintVar(&bitrate, "bitrate", 192, "Audio Bitrate")
 
 	flag.Usage = func() {
 		fmt.Fprint(os.Stderr, fmt.Sprintf(BANNER, VERSION))
