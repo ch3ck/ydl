@@ -31,7 +31,7 @@
 
 Clone GIT repo and install some dependencies:
 ```
-$ git clone htps://github.com/Ch3ck/youtube-dl
+$ git clone https://github.com/Ch3ck/youtube-dl
 
 ```
 
