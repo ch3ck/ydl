@@ -39,7 +39,7 @@ Requirements:
 
 ## Test
 
-Tests are ran by running `make` or `make all`
+Tests are run using `make` or `make all`
 
 ```
 $ make
