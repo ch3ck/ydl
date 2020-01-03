@@ -3,6 +3,7 @@ NAME := ytd
 PKG := github.com/ch3ck/$(NAME)
 PREFIX?=$(shell pwd)
 BUILDTAGS=
+version=v1.1
 
 .PHONY: clean all fmt vet build test install static
 .DEFAULT: default
@@ -24,13 +25,13 @@ fmt:
 test:
 	@echo "+ $@"
 	@find . -name \*.mp3 -delete #clean previous test files.
-	@go test -v -tags "$(BUILDTAGS) cgo" $(shell go list -m all)
+	@go test -v -tags "$(BUILDTAGS) cgo" $(shell go list)
 	@find . -name \*.mp3 -delete # clean previous test downloads
-	@go test -bench=. $(shell go list -m all)
+	@go test -bench=. $(shell go list)
 
 vet:
 	@echo "+ $@"
-	@go vet $(shell go list -m all)
+	@go vet $(shell go list | grep -v vendor)
 
 clean:
 	@echo "+ $@"
@@ -40,5 +41,5 @@ clean:
 
 install:
 	@echo "+ $@"
-	@docker build -t ch3ck/ytd:v1 . 
+	@docker build -t ch3ck/youtube-dl:$(version) . 
 	@go install .
