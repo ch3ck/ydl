@@ -29,10 +29,20 @@ func TestApi(t *testing.T) {
 
 		if ID != "" {
 			if err := getVideoStream("mp3", ID, path, 192); err != nil {
-				t.Errorf("APIvideoStream(%d): expected %v, actual %v", i, nil, err)
+				t.Errorf("videoStream(%d): expected %v, actual %v", i, nil, err)
 			}
 		}
 	}
+}
+
+func TestVideoId(t *testing.T) {
+	urls := []string{"https://www.youtube.com/watch?v=HpNluHOAJFA&list=RDHpNluHOAJFA"}
+
+	url, err := getVideoId(urls[0])
+	if err != nil {
+		t.Log(err)
+	}
+	t.Log(url)
 }
 
 func BenchmarkVideoId(b *testing.B) {
@@ -51,6 +61,6 @@ func BenchmarkApivideoStream(b *testing.B) {
 	path := "~/Downloads/"
 	for n := 0; n < b.N; n++ {
 		file := path + tables[0].id + ".mp3"
-		APIConvertVideo(file, 123, tables[0].id, vid)
+		convertVideo(file, 123, tables[0].id, vid)
 	}
 }*/
