@@ -1,9 +1,4 @@
-// Copyright 2020 YTD Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style
-// license that can be found in the LICENSE file.
-
-// ytd program entry.
-
+// main program entry
 package main
 
 import (
@@ -94,7 +89,7 @@ func main() {
 }
 
 func startProcessing(urls []string) {
-	ch := api.DownloadStreams(defaultMaxDownloads, format, path, bitrate, urls)
+	ch := downloadStreams(defaultMaxDownloads, format, path, bitrate, urls)
 	for err := range ch {
 		//Extract Video data and decode
 		if err != nil {
