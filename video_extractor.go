@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"reflect"
 	"strings"
 	"unicode"
 
@@ -96,6 +97,7 @@ func getVideoStream(format, id, path string, bitrate uint) (err error) {
 	}
 
 	// read the streams map
+	reflect.TypeOf(output)
 	video.Author = output["author"][0]
 	video.Title = output["title"][0]
 	StreamMap, ok := output["url_encoded_fmt_stream_map"]

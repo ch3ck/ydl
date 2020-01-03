@@ -10,7 +10,7 @@ version=v1.1
 
 all: clean fmt vet build test install
 
-build: fmt vet
+build: clean fmt vet
 	@echo "+ $@"
 	@go build -tags "$(BUILDTAGS) cgo" .
 
