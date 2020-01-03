@@ -17,7 +17,7 @@ import (
 	"path/filepath"
 
 	"github.com/sirupsen/logrus"
-	"github.com/viert/lame"
+	"github.com/viert/go-lame"
 )
 
 //Downloads decoded audio stream

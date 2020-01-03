@@ -1,5 +1,9 @@
 # youtube-dl
 
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/ch3ck/youtube-dl)
+[![Github All Releases](https://img.shields.io/github/downloads/ch3ck/youtube-dl/total.svg?style=for-the-badge)](https://github.com/ch3ck/youtube-dl/releases)
+
+
 `youtube-dl` is a simple youtube video downloader and can also download multiple videos concurrently.
 Downloaded videos could be converted to `flv` or `mp3` formats.
 
