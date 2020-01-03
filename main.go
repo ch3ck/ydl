@@ -49,7 +49,7 @@ func init() {
 	flag.UintVar(&bitrate, "bitrate", 192, "Audio Bitrate")
 
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, fmt.Sprintf(BANNER, VERSION))
+		fmt.Fprint(os.Stderr, fmt.Sprintf("%s \t %s", BANNER, VERSION))
 		flag.PrintDefaults()
 	}
 
