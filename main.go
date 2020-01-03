@@ -1,4 +1,4 @@
-// Copyright 2017 YTD Authors. All rights reserved.
+// Copyright 2020 YTD Authors. All rights reserved.
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
@@ -23,7 +23,7 @@ const (
 	//BANNER for ytd which prints the help info
 	BANNER = "ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrl %s\n"
 	//VERSION which prints the ytd version.
-	VERSION = "v0.1"
+	VERSION = "v0.2"
 )
 
 var (
