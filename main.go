@@ -81,13 +81,13 @@ func main() {
 	//Get Video Id
 	if ids == "" {
 		url := os.Args[1]
-		startProcessing([]string{url})
+		beginDownload([]string{url})
 	} else {
-		startProcessing(strings.Split(ids, ","))
+		beginDownload(strings.Split(ids, ","))
 	}
 }
 
-func startProcessing(urls []string) {
+func beginDownload(urls []string) {
 	ch := downloadStreams(defaultMaxDownloads, format, path, bitrate, urls)
 	for err := range ch {
 		//Extract Video data and decode
