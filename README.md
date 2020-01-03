@@ -1,21 +1,20 @@
 # youtube-dl
 
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ch3ck/youtube-dl/Build?style=for-the-badge)](https://github.com/ch3ck/youtube-dl/actions)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/ch3ck/youtube-dl)
-[![Github All Releases](https://img.shields.io/github/downloads/ch3ck/youtube-dl/total.svg?style=for-the-badge)](https://github.com/ch3ck/youtube-dl/releases)
-
+[![GitHub license](https://img.shields.io/github/license/ch3ck/youtube-dl?style=for-the-badge)](https://github.com/ch3ck/youtube-dl/blob/master/LICENSE)
 
 `youtube-dl` is a simple youtube video downloader and can also download multiple videos concurrently.
 Downloaded videos could be converted to `flv` or `mp3` formats.
 
 
-## Dependencies
+## Pre-requisites
 
-* [Go version 1.12](https://github.com/golang/go/releases/tag/go.1.12)
-* [Docker CE 17.06](https://docs.docker.com/release-notes/docker-ce/)
-* [Lame](https://sourceforge.net/projects/lame/)
+- Install [FFMPEG](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg)
 
 
 ## Build
+
 ```bash
 $ git clone htps://github.com/Ch3ck/youtube-dl
 $ cd youtube-dl
