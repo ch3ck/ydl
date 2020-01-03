@@ -1,3 +1,4 @@
+github.com/Sirupsen/logrus v0.0.0-20170822132746-89742aefa4b2 h1:k1A7eIeUk6rnX2yuagwljW/pDezkK8oSpvPumT9zdZY=
 github.com/Sirupsen/logrus v0.0.0-20170822132746-89742aefa4b2/go.mod h1:rmk17hk6i8ZSAJkSDa7nOxamrG+SP4P0mm+DAvExv4U=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
