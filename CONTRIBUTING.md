@@ -1,18 +1,21 @@
-# Contributing to YTD
+# Contributing to youtube-dl
 
-Welcome to the YTD Dev team, we've been expecting you. YTD is an open source project and we greatly appreciate your help!
+Welcome to the youtube-dl dev team, we've been expecting you.
+youtube-dl is an open source project and we greatly appreciate your help!
 
 
 ## Filing Bugs
 
-Please follow these guidelines when filing bugs to the project.
+Please follow the github template when filing bugs.
 
 * Indicate the version Go
 * OS Architecture and other OS information
 * Procedure to reproduce the bug
 * Expected out and current output
 
-For general questions catch me on the [Gophers Slack, #africa channel](https://invite.slack.golangbridge.org/) or on [twitter](https://twitter.com/nyah_check). For sensitive security-related issues should be reported to me directly[checko(mailto:check.nyah@gmail.com).
+For general questions catch me on the [Gophers Slack, #africa channel](https://invite.slack.golangbridge.org/) or
+ on [twitter](https://twitter.com/nyah_check). 
+ For sensitive security-related issues should be reported to me directly[checko(mailto:hello@nyah.dev).
 
 
 ## New Features and General code contribution
