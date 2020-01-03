@@ -8,8 +8,8 @@ jobs:
     name: Setup, Build, Test
     strategy:
       matrix:
-        go-version: [1.12.x, 1.13.x]
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        go-version: [1.12.x]
+        platform: [macos-latest]
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Setup Go
