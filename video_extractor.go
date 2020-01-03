@@ -1,7 +1,7 @@
 /**
  * process download requests with youtube api and extract video stream
  */
-package api
+package main
 
 import (
 	"errors"
