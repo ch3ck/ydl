@@ -6,7 +6,7 @@ package main
 import "sync"
 
 //DownloadStreams download a batch of elements asynchronously
-func DownloadStreams(maxOperations int, format, outputPath string, bitrate uint, urls []string) <-chan error {
+func downloadStreams(maxOperations int, format, outputPath string, bitrate uint, urls []string) <-chan error {
 
 	var wg sync.WaitGroup
 	wg.Add(len(urls))

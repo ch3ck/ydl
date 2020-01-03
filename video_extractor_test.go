@@ -43,7 +43,7 @@ func BenchmarkVideoId(b *testing.B) {
 
 func BenchmarkApivideoStream(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		videoStream("mp3", tables[0].id, "~/Downloads", 192)
+		getVideoStream("mp3", tables[0].id, "~/Downloads", 192)
 	}
 }
 

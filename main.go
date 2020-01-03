@@ -10,8 +10,7 @@ import (
 	"runtime/pprof"
 	"strings"
 
-	"github.com/Ch3ck/youtube-dl/api"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 const (

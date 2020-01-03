@@ -1,7 +1,8 @@
 package main
 
 import (
-	"strings"
+	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -28,6 +29,13 @@ var (
 	Versions_1_2 = append(Versions_1_1)
 	Versions_1_3 = append(Versions_1_2)
 )
+
+func SupportedVersions(v string) []Version {
+	return []Version {
+		{"darwin", "amd64", true},
+		{"linux", "amd64", true}
+	}
+}
 
 func TestGoVersions(t *testing.T) {
 	var versions []Version

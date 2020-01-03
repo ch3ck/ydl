@@ -13,6 +13,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/viert/go-lame v0.0.0-20190822173615-801f1be8d24f h1:Nyjl5q+O34OmyQ8q/xUibfORaLDhBpmT8OU2nPUJQOU=
 github.com/viert/go-lame v0.0.0-20190822173615-801f1be8d24f/go.mod h1:EqTcYM7y4JlSfeTI47pmNu3EZQuCuLQefsQyg1Imlz8=
+github.com/viert/lame v0.0.0-20190823071122-49a063e7d5e6 h1:1XPLOPnNgpmWkgV4Fkx3xZoNRqygHvFaXT+VQeZPs4I=
+github.com/viert/lame v0.0.0-20190823071122-49a063e7d5e6/go.mod h1:iTcgj2s0jGfKkwHeeiNeBBZyNsW+GaK+B8IzbSvOu2w=
 golang.org/x/sys v0.0.0-20190422165155-953cdadca894/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200102141924-c96a22e43c9c h1:OYFUffxXPezb7BVTx9AaD4Vl0qtxmklBIkwCKH1YwDY=
 golang.org/x/sys v0.0.0-20200102141924-c96a22e43c9c/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=

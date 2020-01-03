@@ -143,13 +143,13 @@ func getVideoStream(format, id, path string, bitrate uint) (err error) {
 	url := vstream["url"] + "&signature" + vstream["sig"]
 	logrus.Infof("Downloading file to %s", file)
 	if format == ".mp3" {
-		err = ApiConvertVideo(file, path, bitrate, url)
+		err = convertVideo(file, path, bitrate, url)
 		if err != nil {
 			logrus.Errorf("Error downloading audio: %v", err)
 		}
 
 	} else {
-		if err := ApiDownloadVideo(path, file, url); err != nil {
+		if err := downloadVideo(path, file, url); err != nil {
 			logrus.Errorf("Error downloading video: %v", err)
 		}
 	}
