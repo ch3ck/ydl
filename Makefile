@@ -19,14 +19,14 @@ static:
 
 fmt:
 	@echo "+ $@"
-	@gofmt -s -l -w . | grep -v vendor | tee /dev/stderr
+	@gofmt -s -l -w . | tee /dev/stderr
 
 test:
 	@echo "+ $@"
 	@find . -name \*.mp3 -delete #clean previous test files.
-	@go test -v -tags "$(BUILDTAGS) cgo" $(shell go list ./... | grep -v vendor)
+	@go test -v -tags "$(BUILDTAGS) cgo" $(shell go list -m all)
 	@find . -name \*.mp3 -delete # clean previous test downloads
-	@go test -bench=. $(shell go list ./... | grep -v vendor)
+	@go test -bench=. $(shell go list -m all)
 
 vet:
 	@echo "+ $@"
