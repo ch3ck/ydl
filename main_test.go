@@ -31,9 +31,9 @@ var (
 )
 
 func SupportedVersions(v string) []Version {
-	return []Version {
+	return []Version{
 		{"darwin", "amd64", true},
-		{"linux", "amd64", true}
+		{"linux", "amd64", true},
 	}
 }
 
