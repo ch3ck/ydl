@@ -59,7 +59,7 @@ func convertVideo(file, path string, bitrate uint, url string) error {
 	audioWriter.SetQuality(1)
 
 	// IMPORTANT!
-	audioWriter.initParams()
+	// audioWriter.initParams()
 	reader.WriteTo(audioWriter)
 
 	return nil
