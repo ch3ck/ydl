@@ -54,12 +54,12 @@ func convertVideo(file, path string, bitrate uint, url string) error {
 	defer out.Close()
 	r := bytes.NewReader(data)
 	reader := bufio.NewReader(r)
-	audioWriter := lame.NewWriter(out)
-	audioWriter.Encoder.SetBitrate(int(bitrate))
-	audioWriter.Encoder.SetQuality(1)
+	audioWriter := lame.NewEncoder(out)
+	audioWriter.SetBrate(int(bitrate))
+	audioWriter.SetQuality(1)
 
 	// IMPORTANT!
-	audioWriter.Encoder.InitParams()
+	audioWriter.initParams()
 	reader.WriteTo(audioWriter)
 
 	return nil
