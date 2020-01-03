@@ -30,7 +30,7 @@ test:
 
 vet:
 	@echo "+ $@"
-	@go vet $(shell go list ./... | grep -v vendor)
+	@go vet $(shell go list -m all)
 
 clean:
 	@echo "+ $@"
