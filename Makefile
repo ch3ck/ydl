@@ -1,6 +1,6 @@
-# Builds and runs the micro services go generate && go build
-#$ bin/%: CGO_ENABLED=0 go build -ldflags '-s -w' -tags netgo -v -o $@ ./cmd/$*
-# Set an output prefix, which is the local directory if not specified
+# Setup package name variables
+NAME := ytd
+PKG := github.com/ch3ck/$(NAME)
 PREFIX?=$(shell pwd)
 BUILDTAGS=
 
