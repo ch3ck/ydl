@@ -1,26 +1,26 @@
-name: Build and Run Tests
+# name: Build and Run Tests
 
-on: [push, pull_request]
+# on: [push, pull_request]
 
 
-jobs:
-  setup-build-test:
-    name: Setup, Build, Test
-    strategy:
-      matrix:
-        go-version: [1.12.x]
-        platform: [macos-latest]
-    runs-on: ${{ matrix.platform }}
-    steps:
-    - name: Setup Go
-      uses: actions/setup-go@v1
-      with:
-        go-version: ${{ matrix.go-version }}
-    - name: Checkout code
-      uses: actions/checkout@v1
-    - name: Build
-      run: make build
-    - name: Run tests
-      run: make test
-    - name: Install
-      run: make install
+# jobs:
+#   setup-build-test:
+#     name: Setup, Build, Test
+#     strategy:
+#       matrix:
+#         go-version: [1.12.x]
+#         platform: [macos-latest]
+#     runs-on: ${{ matrix.platform }}
+#     steps:
+#     - name: Setup Go
+#       uses: actions/setup-go@v1
+#       with:
+#         go-version: ${{ matrix.go-version }}
+#     - name: Checkout code
+#       uses: actions/checkout@v1
+#     - name: Build
+#       run: make build
+#     - name: Run tests
+#       run: make test
+#     - name: Install
+#       run: make install
