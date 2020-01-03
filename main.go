@@ -22,7 +22,12 @@ import (
 const (
 
 	//BANNER for ytd which prints the help info
-	BANNER = "ytd -ids 'videoId,videoId2' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrl %s\n"
+	BANNER = `
+		youtube-dl -h
+		youtube-dl - Simple youtube video/audio downloader
+
+		Usage: youtube-dl [OPTIONS] [ARGS]
+	`
 	//VERSION which prints the ytd version.
 	VERSION = "v0.2"
 )
@@ -43,7 +48,7 @@ var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 
 func init() {
 	// parse flags
-	flag.StringVar(&ids, "ids", "", "Youtube Video IDs. Separated then by using a comma.")
+	flag.StringVar(&ids, "id", "", "Youtube Video IDs. Separated then by using a comma.")
 	flag.StringVar(&format, "format", "", "File Format(mp3, webm, flv)")
 	flag.StringVar(&path, "path", ".", "Output Path")
 	flag.BoolVar(&version, "version", false, "print version and exit")
