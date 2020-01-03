@@ -1,0 +1,19 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "a+HW4KfxlTA1ExAUrW8w6EKYoxM=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "67a7fdcf741f4d5cee82cb9800994ccfd4393ad0",
+			"revisionTime": "2019-10-26T11:39:18Z"
+		},
+		{
+			"checksumSHA1": "hJhWnWlJPH69GG7pNZjqm8Lt664=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "1b2967e3c290b7c545b3db0deeda16e9be4f98a2",
+			"revisionTime": "2018-07-06T09:56:39Z"
+		}
+	],
+	"rootPath": "github.com/ch3ck/youtube-dl"
+}
