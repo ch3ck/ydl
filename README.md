@@ -1,76 +1,50 @@
-# ytd
-`ytd` is Go application for downloading Youtube videos and converting to other formats(flv, mp3). To understand the design take a look at the [Design Document](ARCHITECTURE.md).
+# youtube-dl
 
-```
-.
-├── api
-│   ├── apiconv.go
-│   ├── apidata.go
-│   └── apidata_test.go
-├── ARCHITECTURE.md
-├── build.sh
-├── cmd
-│   └── ytd
-│       ├── ytd.go
-│       └── ytd_test.go
-├── CONTRIBUTING.md
-├── Dockerfile
-├── LICENSE
-├── Makefile
-├── README.md
-├── simple.go
-└── vendor
-      ....
-```
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/ch3ck/youtube-dl)
+[![Github All Releases](https://img.shields.io/github/downloads/ch3ck/youtube-dl/total.svg?style=for-the-badge)](https://github.com/ch3ck/youtube-dl/releases)
 
-## Pre requisites
 
-* [Go version 1.8](https://github.com/golang/go/releases/tag/go.1.8.3)
+`youtube-dl` is a simple youtube video downloader and can also download multiple videos concurrently.
+Downloaded videos could be converted to `flv` or `mp3` formats.
+
+
+## Dependencies
+
+* [Go version 1.12](https://github.com/golang/go/releases/tag/go.1.12)
 * [Docker CE 17.06](https://docs.docker.com/release-notes/docker-ce/)
 * [Lame](https://sourceforge.net/projects/lame/)
 
-Clone GIT repo and install some dependencies:
-```
-$ git clone https://github.com/Ch3ck/youtube-dl
-
-```
 
 ## Build
-
-The make command builds the code, runs the tests, generates and runs the docker containers.
-
-```
+```bash
+$ git clone htps://github.com/Ch3ck/youtube-dl
+$ cd youtube-dl
 $ make
 ```
 
-## Kickstart usage
+## Usage
 
-On a Linux or OSX system
+```console
+youtube-dl -h
+youtube-dl - Simple youtube video/audio downloader
+
+Usage: youtube-dl [OPTIONS] [ARGS]
+
+Flags:
+  -bitrate        Audio Bitrate (default 123)
+  -format         File Format(mp3, webm, flv)
+  -id             Youtube Video ID
+  -path           Output Path (default ".")
+  -version        print version and exit
+  -h              Help page
 ```
-ytd -id 'videoId' -format mp3 -bitrate 123  -path ~/Downloads/ videoUrlv0.1
-  -bitrate uint
-    	Audio Bitrate (default 123)
-  -format string
-    	File Format(mp3, webm, flv)
-  -id string
-    	Youtube Video ID
-  -path string
-    	Output Path (default ".")
-  -version
-    	print version and exit
-
-  searches for youtube video on that link and downloads
-```
-Running `ytd` without any arguments will prompt for link.
-
 
 ## Roadmap
 
-* Search for Youtube vidoes based on the Link and provides the download options for either mp3 or flv file.
+* Download youtube video with video id or link and converts to flv or mp3.
 * Support HD Video download.
-* Multithreaded downloads.
+* Concurrent downloads.
 * Web App(PWA, Basic JS Web UI).
-* Package for OSX, Android, iOS.
 
 
 ## Contributing
@@ -79,8 +53,9 @@ Start by starring and Forking this repository. Follow the basic instruction in t
 
 ## Licence
 
-YTD is licensed under [The MIT Licence](LICENSE.md).
+youtube-dl is licensed under [The MIT Licence](LICENSE.md).
 
 ## Author
 
-This project was created and maintained by [Nyah Check](https://twitter.com/nyah_check). Please feel free to reach out, I could always use your help or advice. :-)
+This project was created and maintained by [Nyah Check](https://twitter.com/ch3ck_).
+ Please feel free to reach out, I could always use your help or advice. :-)

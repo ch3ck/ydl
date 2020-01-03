@@ -1,6 +1,6 @@
-# Builds and runs the micro services go generate && go build
-#$ bin/%: CGO_ENABLED=0 go build -ldflags '-s -w' -tags netgo -v -o $@ ./cmd/$*
-# Set an output prefix, which is the local directory if not specified
+# Setup package name variables
+NAME := ytd
+PKG := github.com/ch3ck/$(NAME)
 PREFIX?=$(shell pwd)
 BUILDTAGS=
 
@@ -19,18 +19,18 @@ static:
 
 fmt:
 	@echo "+ $@"
-	@gofmt -s -l -w . | grep -v vendor | tee /dev/stderr
+	@gofmt -s -l -w . | tee /dev/stderr
 
 test:
 	@echo "+ $@"
 	@find . -name \*.mp3 -delete #clean previous test files.
-	@go test -v -tags "$(BUILDTAGS) cgo" $(shell go list ./... | grep -v vendor)
+	@go test -v -tags "$(BUILDTAGS) cgo" $(shell go list -m all)
 	@find . -name \*.mp3 -delete # clean previous test downloads
-	@go test -bench=. $(shell go list ./... | grep -v vendor)
+	@go test -bench=. $(shell go list -m all)
 
 vet:
 	@echo "+ $@"
-	@go vet $(shell go list ./... | grep -v vendor)
+	@go vet $(shell go list -m all)
 
 clean:
 	@echo "+ $@"
