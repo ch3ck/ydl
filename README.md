@@ -21,7 +21,19 @@ $ cd youtube-dl
 $ make
 ```
 
+## Install
+
+
+
 ## Usage
+
+To install youtube-dl
+
+```console
+$ go get github.com/Ch3ck/youtube-dl
+```
+
+To run download:
 
 ```console
 youtube-dl -h
@@ -48,13 +60,13 @@ Flags:
 
 ## Contributing
 
-Start by starring and Forking this repository. Follow the basic instruction in the [CONTRIBUTING](CONTRIBUTING.md) file.
+Follow the basic instruction in the [CONTRIBUTING](CONTRIBUTING.md) file.
 
 ## Licence
 
-youtube-dl is licensed under [The MIT Licence](LICENSE.md).
+`youtube-dl` is licensed under [The MIT Licence](LICENSE.md).
 
-## Author
 
-This project was created and maintained by [Nyah Check](https://twitter.com/ch3ck_).
- Please feel free to reach out, I could always use your help or advice. :-)
+## Support
+
+This project was created and is maintained by [Nyah Check](https://twitter.com/ch3ck_)
