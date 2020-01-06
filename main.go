@@ -2,7 +2,6 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	_ "net/http/pprof"
@@ -92,7 +91,7 @@ func main() {
 }
 
 // parseUrls for video download
-func parseUrls(urls strings) []string {
+func parseUrls(urls string) []string {
 	if ids == "" {
 		return []string{os.Args[1]}
 	} else {
@@ -103,7 +102,7 @@ func parseUrls(urls strings) []string {
 func beginDownload(urls []string) {
 
 	if len(urls) < 2 {
-		if vId, err := getVideoId(url[0]); err != nil {
+		if vId, err := getVideoId(urls[0]); err != nil {
 			logrus.Errorf("Error fetching videoId: %v", err)
 		} else {
 			if err := decodeVideoStream(vId, path, format, bitrate); err != nil {
