@@ -7,8 +7,8 @@ import (
 var tables = []struct {
 	url, id string // input
 }{
-	{"https://www.youtube.com/watch?v=HpNluHOAJFA&list=RDHpNluHOAJFA", "HpNluHOAJFA"},
-	{"https://www.youtube.com/watch?v=jOWsu8ePrbE&list=RDHpNluHOAJFA&index=8", "jOWsu8ePrbE"},
+	{"https://www.youtube.com/watch?v=HpNluHOAJFA", "HpNluHOAJFA"},
+	{"https://www.youtube.com/watch?v=jOWsu8ePrbE", "jOWsu8ePrbE"},
 	{"", ""},
 	{"https://www.facebook.com/mark/videos?v=RDHpNluHOAJFA", ""},
 	{"https://www.youtube.com/watch?v=lWEbEtr_Vng", "lWEbEtr_Vng"},
@@ -20,25 +20,25 @@ var vid []string
 
 func TestApi(t *testing.T) {
 
-	path := "test"
+	// path := "test"
 	for i, table := range tables {
 		ID, _ := getVideoId(table.url)
 		if ID != table.id {
 			t.Errorf("videoId(%d): expected %q, actual %q", i, table.id, ID)
 		}
 
-		if ID != "" {
-			if err := getVideoStream("mp3", ID, path, 192); err != nil {
-				t.Errorf("videoStream(%d): expected %v, actual %v", i, nil, err)
-			}
-		}
+		// if ID != "" {
+		// 	if err := getVideoStream("mp3", ID, path, 192); err != nil {
+		// 		t.Errorf("videoStream(%d): expected %v, actual %v", i, nil, err)
+		// 	}
+		// }
 	}
 }
 
-func TestVideoId(t *testing.T) {
+func TestGetVideoId(t *testing.T) {
 	urls := []string{"https://www.youtube.com/watch?v=HpNluHOAJFA&list=RDHpNluHOAJFA"}
 
-	url, err := getVideoId(urls)
+	url, err := getVideoId(urls[0])
 	if err != nil {
 		t.Log(err)
 	}
@@ -51,11 +51,11 @@ func BenchmarkVideoId(b *testing.B) {
 	}
 }
 
-func BenchmarkApivideoStream(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		getVideoStream("mp3", tables[0].id, "~/Downloads", 192)
-	}
-}
+// func BenchmarkApivideoStream(b *testing.B) {
+// 	for n := 0; n < b.N; n++ {
+// 		getVideoStream("mp3", tables[0].id, "~/Downloads", 192)
+// 	}
+// }
 
 /*func BenchmarkApiConvertVideo(b *testing.B) {
 	path := "~/Downloads/"
