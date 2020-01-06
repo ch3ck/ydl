@@ -88,12 +88,13 @@ func main() {
 }
 
 func beginDownload(urls []string) {
-	ch := downloadStreams(defaultMaxDownloads, format, path, bitrate, urls)
-	for err := range ch {
-		//Extract Video data and decode
-		if err != nil {
-			logrus.Errorf("Error decoding Video stream: %v", err)
-		}
+	vId, err := getVideoId(urls[0])
+	if err != nil {
+		logrus.Errorf("Error getting videoId: %v", err)
+	}
+
+	if err := getVideoStream(format, vId, path, bitrate); err != nil {
+		logrus.Errorf("Error downloading video stream: %v", err)
 	}
 }
 
