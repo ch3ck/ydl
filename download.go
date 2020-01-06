@@ -252,9 +252,9 @@ func decodeVideoStream(videoId, path, format string, bitrate uint) error {
 
 	reason, _ := parsedResp["reason"]
 	if status[0] == "fail" {
-		return errors.New(fmt.Sprint("'fail' response with reason: %v", reason))
+		return errors.New(fmt.Sprintf("'fail' response with reason: %s", reason))
 	} else if status[0] != "ok" {
-		return errors.New(fmt.Sprint("'non-success' response with reason: %v", reason))
+		return errors.New(fmt.Sprintf("'non-success' response with reason: %s", reason))
 	}
 
 	if err := decodeStream(parsedResp, rawVideo, decStreams); err != nil {
