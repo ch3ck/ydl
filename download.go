@@ -22,7 +22,7 @@ import (
 const (
 	audioBitRate = 123
 
-	streamApiUrl = "https://youtube.com/get_video_info?video_id="
+	streamApiUrl = "http://youtube.com/get_video_info?video_id="
 )
 
 type stream map[string]string
@@ -205,17 +205,20 @@ func downloadVideoStream(url string) (*http.Response, error) {
 // getVideoId extracts the video id string from youtube url
 // getVideoId returns a video id string to calling function
 func getVideoId(url string) (string, error) {
-	if !strings.Contains(url, "youtube.com") {
-		return "", errors.New("Invalid Youtube URL")
-	}
+	if len(url) < 15 {
+		return url, nil
+	} else {
+		if !strings.Contains(url, "youtube.com") {
+			return "", errors.New("Invalid Youtube URL")
+		}
 
-	s := strings.Split(url, "?v=")
-	s = strings.Split(s[1], "&")
-	if len(s[0]) == 0 {
-		return s[0], errors.New("Empty string")
-	}
+		s := strings.Split(url, "?v=")[1]
+		if len(s) == 0 {
+			return s, errors.New("Empty string")
+		}
 
-	return s[0], nil
+		return s, nil
+	}
 }
 
 // decodeVideoStream processes downloaded video stream and
