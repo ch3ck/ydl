@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"runtime/pprof"
 	"strings"
+	"sync"
 
 	"github.com/sirupsen/logrus"
 )
@@ -93,9 +94,36 @@ func beginDownload(urls []string) {
 		logrus.Errorf("Error getting videoId: %v", err)
 	}
 
-	if err := getVideoStream(format, vId, path, bitrate); err != nil {
+	if err := decodeVideoStream(vId, path, format, bitrate); err != nil {
 		logrus.Errorf("Error downloading video stream: %v", err)
 	}
+}
+
+//DownloadStreams download a batch of elements asynchronously
+func concurrentDownload(maxOperations int, format, outputPath string, bitrate uint, urls []string) <-chan error {
+
+	var wg sync.WaitGroup
+	wg.Add(len(urls))
+
+	ch := make(chan error, maxOperations)
+	for _, url := range urls {
+		go func(url string) {
+			defer wg.Done()
+
+			if videoId, err := getVideoId(url); err != nil {
+				ch <- err
+			} else {
+				ch <- decodeVideoStream(videoId, path, format, bitrate)
+			}
+		}(url)
+	}
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	return ch
 }
 
 func usageAndExit(message string, exitCode int) {

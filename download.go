@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -62,7 +61,7 @@ func fixExtension(str string) string {
 
 // decodeStream accept Values and decodes them individually
 // decodeStream returns the final RawVideoStream object
-func decodeStream(values Values, streams *RawVideoStream, rawstream *stream) error {
+func decodeStream(values url.Values, streams *RawVideoStream, rawstream []stream) error {
 	streams.Author = values["author"][0]
 	streams.Title = values["title"][0]
 	streamMap, ok := values["url_encoded_fmt_stream_map"]
@@ -71,7 +70,7 @@ func decodeStream(values Values, streams *RawVideoStream, rawstream *stream) err
 	}
 
 	// read and decode streams
-	streamsList := strings.Split(string(StreamMap[0]), ",")
+	streamsList := strings.Split(string(streamMap[0]), ",")
 	for streamPos, streamRaw := range streamsList {
 		streamQry, err := url.ParseQuery(streamRaw)
 		if err != nil {
@@ -88,12 +87,14 @@ func decodeStream(values Values, streams *RawVideoStream, rawstream *stream) err
 			"type":    streamQry["type"][0],
 			"url":     streamQry["url"][0],
 			"sig":     sig,
-			"title":   output["title"][0],
-			"author":  output["author"][0],
+			"title":   values["title"][0],
+			"author":  values["author"][0],
 		})
 		logrus.Infof("Stream found: quality '%s', format '%s'", streamQry["quality"][0], streamQry["type"][0])
 	}
+
 	streams.URLEncodedFmtStreamMap = rawstream
+	return nil
 }
 
 // encodeAudioStream consumes a raw data stream and
@@ -108,7 +109,7 @@ func encodeAudioStream(file, path, surl string, bitrate uint) error {
 
 	tmp, _ := os.OpenFile("_temp_", os.O_CREATE, 0755)
 	defer tmp.Close()
-	if _, err := io.Copy(resp.Body, tmp); err != nil {
+	if _, err := io.Copy(tmp, resp.Body); err != nil {
 		logrus.Errorf("Failed to read response body: %v", err)
 		return err
 	}
@@ -122,7 +123,7 @@ func encodeAudioStream(file, path, surl string, bitrate uint) error {
 
 	outputDirectory := currentDirectory.HomeDir + "Downloads" + path
 	outputFile := filepath.Join(outputDirectory, file)
-	if err != os.MkdirAll(filepath.Dir(outputFile), 0775); err != nil {
+	if err := os.MkdirAll(filepath.Dir(outputFile), 0775); err != nil {
 		logrus.Errorf("Unable to create output directory: %v", err)
 	}
 
@@ -134,11 +135,11 @@ func encodeAudioStream(file, path, surl string, bitrate uint) error {
 	defer fp.Close()
 
 	// write audio/video file to output
-	reader := bufio.NewReader(bytes.NewReader(rawData))
+	reader := bufio.NewReader(tmp)
 	writer := lame.NewEncoder(fp)
 	defer writer.Close()
 
-	writer.setBrate(int(bitrate))
+	writer.SetBrate(int(bitrate))
 	writer.SetQuality(1)
 	reader.WriteTo(writer)
 
@@ -164,7 +165,7 @@ func encodeVideoStream(file, path, surl string) error {
 
 	outputDirectory := currentDirectory.HomeDir + "Downloads" + path
 	outputFile := filepath.Join(outputDirectory, file)
-	if err != os.MkdirAll(filepath.Dir(outputFile), 0775); err != nil {
+	if err := os.MkdirAll(filepath.Dir(outputFile), 0775); err != nil {
 		logrus.Errorf("Unable to create output directory: %v", err)
 	}
 
@@ -234,14 +235,8 @@ func decodeVideoStream(videoId, path, format string, bitrate uint) error {
 		return err
 	}
 
-	tempfile, _ := os.OpenFile("_temp_download", os.O_CREATE, 0755)
-	defer tempfile.Close()
-	if _, err := io.Copy(videoStream.Body, tempfile); err != nil {
-		logrus.Errorf("Failed to read response body: %v", err)
-		return err
-	}
-
-	parsedResp, err := url.ParseQuery(string(tempfile))
+	data, _ := ioutil.ReadAll(videoStream.Body)
+	parsedResp, err := url.ParseQuery(string(data))
 	if err != nil {
 		logrus.Errorf("Error parsing video byte stream: %v", err)
 		return err
@@ -249,7 +244,7 @@ func decodeVideoStream(videoId, path, format string, bitrate uint) error {
 
 	status, ok := parsedResp["status"]
 	if !ok {
-		return error.New("No response from server")
+		return errors.New("No response from server")
 	}
 
 	reason, _ := parsedResp["reason"]
@@ -259,15 +254,15 @@ func decodeVideoStream(videoId, path, format string, bitrate uint) error {
 		return errors.New(fmt.Sprint("'non-success' response with reason: %v", reason))
 	}
 
-	if err := decodeStream(parsedResp, &rawVideo, &decStreams); err != nil {
-		return error.New("Unable to decode raw video streams")
+	if err := decodeStream(parsedResp, rawVideo, decStreams); err != nil {
+		return errors.New("Unable to decode raw video streams")
 	}
 
 	file := removeWhiteSpace(rawVideo.Title + fixExtension(format))
 	surl := decStreams[0]["url"] + "&signature" + decStreams[0]["sig"]
 	logrus.Infof("Downloading data to file: %s", file)
 
-	if String.Contains(file, "mp3") {
+	if strings.Contains(file, "mp3") {
 		if err := encodeAudioStream(file, path, surl, bitrate); err != nil {
 			logrus.Errorf("Unable to encode %s: %v", format, err)
 		}
