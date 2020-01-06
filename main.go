@@ -66,8 +66,8 @@ func main() {
 	}
 	runtime.SetBlockProfileRate(20)
 
-	args := flag.Args()
-	if len(args) <= 1 {
+	args := os.Args
+	if len(args) < 2 {
 		usageAndExit(BANNER, 2)
 	}
 	if path == "" {
@@ -76,18 +76,6 @@ func main() {
 
 	urls := parseUrls(ids)
 	beginDownload(urls)
-
-	if len(os.Args) == 1 {
-		usageAndExit(BANNER, -1)
-	}
-
-	//Get Video Id
-	if ids == "" {
-		url := os.Args[1]
-		beginDownload([]string{url})
-	} else {
-		beginDownload(strings.Split(ids, ","))
-	}
 }
 
 // parseUrls for video download
