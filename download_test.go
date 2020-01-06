@@ -38,7 +38,7 @@ func TestApi(t *testing.T) {
 func TestVideoId(t *testing.T) {
 	urls := []string{"https://www.youtube.com/watch?v=HpNluHOAJFA&list=RDHpNluHOAJFA"}
 
-	url, err := getVideoId(urls[0])
+	url, err := getVideoId(urls)
 	if err != nil {
 		t.Log(err)
 	}
