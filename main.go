@@ -42,7 +42,7 @@ var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 func init() {
 	// parse flags
 	flag.StringVar(&ids, "id", "", "video url or video id; separate multiple ids with a comma.")
-	flag.StringVar(&format, "format", "", "download file format(mp3 or flv)")
+	flag.StringVar(&format, "format", "flv", "download file format(mp3 or flv)")
 	flag.StringVar(&path, "path", ".", "download file path")
 	flag.BoolVar(&version, "version", false, "print version number")
 	flag.UintVar(&bitrate, "bitrate", 192, "audio bitrate")
