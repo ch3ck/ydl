@@ -12,7 +12,7 @@ all: clean fmt vet build test install
 
 build: clean fmt
 	@echo "+ $@"
-	@go build -tags "$(BUILDTAGS) cgo" .
+	CGO_ENABLED=1 go build -tags "$(BUILDTAGS) cgo" .
 
 static:
 	@echo "+ $@"
