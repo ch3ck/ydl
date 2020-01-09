@@ -1,17 +1,18 @@
-FROM golang:latest AS go-base
+FROM golang:1.13-alpine AS go-base
+RUN apk add --no-cache git
 
 MAINTAINER Nyah Check <hello@nyah.dev>
 
-RUN apk add --no-cache \
-	ca-certificates \
-	make
-
-FROM go-base
-WORKDIR /go/src/github.com/ch3ck/youtube-dl
+ENV CGO_ENABLED=1
+ENV GO111MODULE=on
+WORKDIR /app
+RUN echo "Build container"
 COPY . .
-RUN make build
-
-RUN echo "Image build complete."
+RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o ./youtube-dl download.go main.go
 
 
-CMD [ "./youtube-dl" ]
+#runtime container
+FROM scratch
+RUN echo "Runtime container"
+COPY --from=go-base /app/youtube-dl /youtube-dl
+ENTRYPOINT ["/youtube-dl"]
