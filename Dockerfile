@@ -1,3 +1,5 @@
+
+# Build container
 FROM golang:1.13-alpine AS go-base
 RUN apk add --no-cache git
 
@@ -11,7 +13,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o ./youtube-dl download.go main.go
 
 
-#runtime container
+# Runtime container
 FROM scratch
 RUN echo "Runtime container"
 COPY --from=go-base /app/youtube-dl /youtube-dl
