@@ -8,11 +8,6 @@
 Downloaded videos could be converted to `flv` or `mp3` formats.
 
 
-## Pre-requisites
-
-- Install [FFMPEG](https://github.com/adaptlearning/adapt_authoring/wiki/Installing-FFmpeg)
-
-
 ## Build
 
 ```bash
@@ -48,6 +43,12 @@ Flags:
   -path           Output Path (default ".")
   -version        print version and exit
   -h              Help page
+```
+
+### Example
+
+```console
+$ ./youtube-dl -format mp3 https://www.youtube.com/watch?v=jOWsu8ePrbE
 ```
 
 ## Roadmap

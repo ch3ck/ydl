@@ -22,44 +22,17 @@ func TestApi(t *testing.T) {
 
 	// path := "test"
 	for i, table := range tables {
-		ID, _ := getVideoId(table.url)
-		if ID != table.id {
-			t.Errorf("videoId(%d): expected %q, actual %q", i, table.id, ID)
+		err := decodeVideoStream(table.url, "~/Downloads", "mp3")
+		if err != nil {
+			t.Errorf("videoId(%d): expected %q, actual %q", i, table.id, err)
 		}
-
-		// if ID != "" {
-		// 	if err := getVideoStream("mp3", ID, path, 192); err != nil {
-		// 		t.Errorf("videoStream(%d): expected %v, actual %v", i, nil, err)
-		// 	}
-		// }
-	}
-}
-
-func TestGetVideoId(t *testing.T) {
-	urls := []string{"https://www.youtube.com/watch?v=HpNluHOAJFA"}
-
-	url, err := getVideoId(urls[0])
-	if err != nil {
-		t.Errorf("videoId: expected %q, actual %q", "HpNluHOAJFA", url)
 	}
 }
 
 func BenchmarkVideoId(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		getVideoId(tables[0].url)
+		if err := decodeVideoStream(tables[0].url, "~/Downloads", "mp3"); err != nil {
+			b.Errorf("Error downloading video: %v", err)
+		}
 	}
 }
-
-// func BenchmarkApivideoStream(b *testing.B) {
-// 	for n := 0; n < b.N; n++ {
-// 		getVideoStream("mp3", tables[0].id, "~/Downloads", 192)
-// 	}
-// }
-
-/*func BenchmarkApiConvertVideo(b *testing.B) {
-	path := "~/Downloads/"
-	for n := 0; n < b.N; n++ {
-		file := path + tables[0].id + ".mp3"
-		convertVideo(file, 123, tables[0].id, vid)
-	}
-}*/

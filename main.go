@@ -90,22 +90,18 @@ func parseUrls(urls string) []string {
 func beginDownload(urls []string) {
 
 	if len(urls) < 2 {
-		if vId, err := getVideoId(urls[0]); err != nil {
-			logrus.Errorf("Error fetching videoId: %v", err)
-		} else {
-			if err := decodeVideoStream(vId, path, format, bitrate); err != nil {
-				logrus.Errorf("Unable to beginDownload: %v", err)
-			}
+		if err := decodeVideoStream(urls[0], path, format); err != nil {
+			logrus.Errorf("Unable to beginDownload: %v", err)
 		}
 	} else {
-		if err := concurrentDownload(MAXDOWNLOADS, format, path, bitrate, urls); err != nil {
+		if err := concurrentDownload(MAXDOWNLOADS, format, path, urls); err != nil {
 			logrus.Errorf("Unable to concurrently download videos: %v with errors => %v", urls, err)
 		}
 	}
 }
 
 //DownloadStreams download a batch of elements asynchronously
-func concurrentDownload(maxOperations int, format, outputPath string, bitrate uint, urls []string) <-chan error {
+func concurrentDownload(maxOperations int, format, outputPath string, urls []string) <-chan error {
 
 	var wg sync.WaitGroup
 	wg.Add(len(urls))
@@ -114,12 +110,7 @@ func concurrentDownload(maxOperations int, format, outputPath string, bitrate ui
 	for _, url := range urls {
 		go func(url string) {
 			defer wg.Done()
-
-			if videoId, err := getVideoId(url); err != nil {
-				ch <- err
-			} else {
-				ch <- decodeVideoStream(videoId, path, format, bitrate)
-			}
+			ch <- decodeVideoStream(url, path, format)
 		}(url)
 	}
 
