@@ -48,7 +48,7 @@ Flags:
 ### Example
 
 ```console
-$ ./youtube-dl -format mp3 https://www.youtube.com/watch?v=jOWsu8ePrbE
+$ ./youtube-dl -format mp3 -id https://www.youtube.com/watch?v=lWEbEtr_Vng
 ```
 
 ## Roadmap
