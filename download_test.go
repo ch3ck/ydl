@@ -7,11 +7,11 @@ import (
 var tables = []struct {
 	url, id string // input
 }{
-	{"https://www.youtube.com/watch?v=HpNluHOAJFA", "HpNluHOAJFA"},
-	{"https://www.youtube.com/watch?v=jOWsu8ePrbE", "jOWsu8ePrbE"},
+	{"https://www.youtube.com/watch?v=lWEbEtr_Vng", "lWEbEtr_Vng"},
+	{"https://www.youtube.com/watch?v=ALWmcO8S-dc", "ALWmcO8S-dc"},
 	{"", ""},
 	{"https://www.facebook.com/mark/videos?v=RDHpNluHOAJFA", ""},
-	{"https://www.youtube.com/watch?v=lWEbEtr_Vng", "lWEbEtr_Vng"},
+	{"https://www.youtube.com/watch?v=ALWmcO8S-dc", "ALWmcO8S-dc"},
 	{"https://www.wsj.com/articles/trump-administration-wont-withdraw-from-paris-climate-deal-1505593922", ""},
 	{"https://vimeo.com/101522071", ""},
 }

@@ -88,7 +88,6 @@ func parseUrls(urls string) []string {
 }
 
 func beginDownload(urls []string) {
-
 	if len(urls) < 2 {
 		if err := decodeVideoStream(urls[0], path, format); err != nil {
 			logrus.Errorf("Unable to beginDownload: %v", err)
