@@ -10,11 +10,10 @@ ENV GO111MODULE=on
 WORKDIR /app
 RUN echo "Build container"
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags "-static"' -o ./youtube-dl download.go main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /youtube-dl .
 
 
 # Runtime container
 FROM scratch
-RUN echo "Runtime container"
-COPY --from=go-base /app/youtube-dl /youtube-dl
+COPY --from=go-base /youtube-dl /youtube-dl
 ENTRYPOINT ["/youtube-dl"]
