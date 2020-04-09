@@ -43,12 +43,14 @@ func decodeVideoStream(videoUrl, format string) error {
 	res, err := goutubedl.New(context.Background(), videoUrl, goutubedl.Options{})
 	if err != nil {
 		logrus.Errorf("Unable to create goutube object %s: %v", videoUrl, err)
+		return err
 	}
 
 	file := removeWhiteSpace(res.Info.Title) + fixExtension(format)
 	videoStream, err := res.Download(context.Background(), "best")
 	if err != nil {
 		logrus.Errorf("Unable to download %s stream: %v", format, err)
+		return err
 	}
 	defer videoStream.Close()
 
