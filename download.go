@@ -50,7 +50,7 @@ func decodeVideoStream(videoUrl, path, format string) error {
 	if err != nil {
 		logrus.Errorf("Unable to download %s stream: %v", format, err)
 	}
-	defer videoStream.close()
+	defer videoStream.Close()
 
 	// Create output file
 	fp, err := os.OpenFile(file, os.O_CREATE, 0755)
@@ -61,4 +61,6 @@ func decodeVideoStream(videoUrl, path, format string) error {
 	defer fp.Close()
 
 	io.Copy(fp, videoStream)
+
+	return nil
 }
