@@ -37,7 +37,7 @@ func fixExtension(str string) string {
 // decodeVideoStream processes downloaded video stream and
 // decodeVideoStream calls helper functions and writes the
 // output in the required format
-func decodeVideoStream(videoUrl, path, format string) error {
+func decodeVideoStream(videoUrl, format string) error {
 
 	// Get video data
 	res, err := goutubedl.New(context.Background(), videoUrl, goutubedl.Options{})
