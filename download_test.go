@@ -22,7 +22,7 @@ func TestApi(t *testing.T) {
 
 	// path := "test"
 	for i, table := range tables {
-		err := decodeVideoStream(table.url, "~/Downloads", "mp3")
+		err := decodeVideoStream(table.url, "mp3")
 		if err != nil {
 			t.Errorf("videoId(%d): expected %q, actual %q", i, table.id, err)
 		}
@@ -31,7 +31,7 @@ func TestApi(t *testing.T) {
 
 func BenchmarkVideoId(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		if err := decodeVideoStream(tables[0].url, "~/Downloads", "mp3"); err != nil {
+		if err := decodeVideoStream(tables[0].url, "mp3"); err != nil {
 			b.Errorf("Error downloading video: %v", err)
 		}
 	}
