@@ -4,8 +4,6 @@ import (
 	"context"
 	"io"
 	"os"
-	"os/user"
-	"path/filepath"
 	"strings"
 	"unicode"
 
@@ -48,25 +46,14 @@ func decodeVideoStream(videoUrl, path, format string) error {
 	}
 
 	file := removeWhiteSpace(res.Info.Title) + fixExtension(format)
-	videoStream, err := res.Download(context.TODO(), format)
+	videoStream, err := res.Download(context.Background(), "best")
 	if err != nil {
 		logrus.Errorf("Unable to download %s stream: %v", format, err)
 	}
+	defer videoStream.close()
 
 	// Create output file
-	currentDirectory, err := user.Current()
-	if err != nil {
-		logrus.Errorf("Error getting current user directory: %v", err)
-		return err
-	}
-
-	outputDirectory := currentDirectory.HomeDir + "/Downloads/" + path
-	outputFile := filepath.Join(outputDirectory, file)
-	if err := os.MkdirAll(filepath.Dir(outputFile), 0775); err != nil {
-		logrus.Errorf("Unable to create output directory: %v", err)
-	}
-
-	fp, err := os.OpenFile(outputFile, os.O_CREATE, 0755)
+	fp, err := os.OpenFile(file, os.O_CREATE, 0755)
 	if err != nil {
 		logrus.Errorf("Unable to create output file: %v", err)
 		return err
@@ -74,7 +61,4 @@ func decodeVideoStream(videoUrl, path, format string) error {
 	defer fp.Close()
 
 	io.Copy(fp, videoStream)
-	videoStream.Close()
-
-	return nil
 }
