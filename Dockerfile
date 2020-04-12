@@ -15,6 +15,5 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /youtube-dl .
 
 # Runtime container
 FROM scratch
-RUN echo "Runtime container"
-COPY --from=go-base /app/youtube-dl /youtube-dl
+COPY --from=go-base /youtube-dl /youtube-dl
 ENTRYPOINT ["/youtube-dl"]

@@ -16,9 +16,6 @@ $ cd youtube-dl
 $ make
 ```
 
-## Install
-
-
 
 ## Usage
 
@@ -47,8 +44,8 @@ Flags:
 
 ### Example
 
-```console
-$ ./youtube-dl -format mp3 https://www.youtube.com/watch?v=jOWsu8ePrbE
+```bash
+$ ./youtube-dl -format mp3 -id lWEbEtr_Vng
 ```
 
 ## Roadmap
