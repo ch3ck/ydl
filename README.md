@@ -11,7 +11,7 @@ Downloaded videos could be converted to `flv` or `mp3` formats.
 ## Build
 
 ```bash
-$ git clone htps://github.com/Ch3ck/youtube-dl
+$ git clone https://github.com/Ch3ck/youtube-dl
 $ cd youtube-dl
 $ make
 ```
