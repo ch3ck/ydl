@@ -1,31 +1,42 @@
-# Contributing to youtube-dl
+## Contributing
 
-Welcome to the youtube-dl dev team, we've been expecting you.
-youtube-dl is an open source project and we greatly appreciate your help!
+[fork]: https://github.com/actions/cache/fork
+[pr]: https://github.com/actions/cache/compare
+[code-of-conduct]: CODE_OF_CONDUCT.md
 
+Hi there! We're thrilled that you'd like to contribute to this project. Your help is essential for keeping it great.
 
-## Filing Bugs
+Contributions to this project are [released](https://help.github.com/articles/github-terms-of-service/#6-contributions-under-repository-license) to the public under the [project's open source license](LICENSE).
 
-Please follow the github template when filing bugs.
+Please read the [Contribution Guidelines](https://golang.org/doc/contribute.html). We try as much as possible to respect the rules in there.
 
-* Indicate the version Go
-* OS Architecture and other OS information
-* Procedure to reproduce the bug
-* Expected out and current output
+Please note that this project is released with a [Contributor Code of Conduct][code-of-conduct]. By participating in this project you agree to abide by its terms.
 
-For general questions catch me on the [Gophers Slack, #africa channel](https://invite.slack.golangbridge.org/) or
- on [twitter](https://twitter.com/nyah_check). 
- For sensitive security-related issues should be reported to me directly[checko(mailto:hello@nyah.dev).
+## Submitting a pull request
 
+1. [Fork][fork] and clone the repository
+2. Make sure the tests pass on your machine: `go test`
+3. Create a new branch: `git checkout -b my-branch-name`
+4. Make your change, add tests, and make sure the tests still pass
+5. Push to your fork and [submit a pull request][pr] using the template provided
+7. Pat your self on the back and wait for your pull request to be reviewed and merged.
 
-## New Features and General code contribution
+Here are a few things you can do that will increase the likelihood of your pull request being accepted:
 
-Please read the [Contribution Guidelines](https://golang.org/doc/contribute.html). We try as much as possible to respect the rules in there. 
+- Write tests.
+- Keep your change as focused as possible. If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
+- Write a [good commit message](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
 
-** GitHub Pull Requests are highly welcomed**
+## Licensed
 
-Please follow these basic rules first
-* https://help.github.com/articles/fork-a-repo/
-* https://help.github.com/articles/syncing-a-fork/
+This repository uses a tool called [Licensed](https://github.com/github/licensed) to verify third party dependencies. You may need to locally install licensed and run `licensed cache` to update the dependency cache if you install or update a production dependency. If licensed cache is unable to determine the dependency, you may need to modify the cache file yourself to put the correct license. You should still verify the dependency, licensed is a tool to help, but is not a substitute for human review of dependencies.
 
-Unless otherwise noted, the Go source files are distributed under the MIT-style license found in the LICENSE file.
+## Resources
+
+- [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
+- [Using Pull Requests](https://help.github.com/articles/about-pull-requests/)
+- [GitHub Help](https://help.github.com)
+- [Gophers Slack, #africa channel](https://invite.slack.golangbridge.org/) or
+  * on [twitter](https://twitter.com/ch3ck_). 
+  * For security-related issues should be reported to me directly[checko(mailto:hello@nyah.dev).
+
