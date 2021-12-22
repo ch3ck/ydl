@@ -1,9 +1,7 @@
-# Compiled Object files, Static and Dynamic libs (Shared Objects)
-*.o
-*.a
-*.so
+# MacOS DS_Store files
+.DS_Store
 
-# Ignore all downloaded video and audio files
+# Binaries for programs and plugins
 *.mp3
 *.flv
 *.webm
@@ -11,22 +9,49 @@
 *.mp4
 *.3gpp
 *.ogg
+*.exe
+*.exe~
+*.dll
+*.o
+*.a
+*.so
+*.dylib
 
-# Compiled binaries
+## Compiled binaries
 ytd
 youtube-dl
 
-*.exe
+
+# Test binary, built with `go test -c`
 *.test
 *.prof
 
-# OSX
-.DS_Store
-
-# CODE coverage results
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+coverage.html
 coverage.txt
 profile.out
 
-# ENV files
+# Dependency directories (remove the comment below to include it)
+vendor/
+
+# Output of GoReleaser
+dist/
+
+# Visual Studio Code files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+# GoLand and IntelliJ IDEA files
+.idea/
+
+# env files that usually contain secrets or local config
+.env
 .envrc
-.idea
