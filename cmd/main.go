@@ -11,6 +11,8 @@ import (
 	"strings"
 	"sync"
 
+	"youtube-dl/pkg/downloader"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -87,21 +89,18 @@ func parseUrls(urls string) []string {
 	}
 }
 
-func beginDownload(urls []string) {
-	if len(urls) < 2 {
-		if err := decodeVideoStream(urls[0], format); err != nil {
-			logrus.Errorf("Unable to beginDownload: %v", err)
-		}
-	} else {
-		if err := concurrentDownload(MAXDOWNLOADS, format, urls); err != nil {
-			logrus.Errorf("Unable to concurrently download videos: %v with errors => %v", urls, err)
-		}
+// beginDownload of videos from specified url(s)
+// and returns error if it fails
+func beginDownload(urls []string) <-chan error {
+	if err := concurrentDownload(MAXDOWNLOADS, format, urls); err != nil {
+		logrus.Errorf("Unable to download video(s): %v with errors => %v", urls, err)
+		return err
 	}
+	return nil
 }
 
 //DownloadStreams download a batch of elements asynchronously
 func concurrentDownload(maxOperations int, format string, urls []string) <-chan error {
-
 	var wg sync.WaitGroup
 	wg.Add(len(urls))
 
@@ -109,7 +108,7 @@ func concurrentDownload(maxOperations int, format string, urls []string) <-chan 
 	for _, url := range urls {
 		go func(url string) {
 			defer wg.Done()
-			ch <- decodeVideoStream(url, format)
+			ch <- downloader.DecodeVideoStream(url, format)
 		}(url)
 	}
 

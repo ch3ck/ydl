@@ -1,4 +1,4 @@
-package main
+package downloader
 
 import (
 	"context"
@@ -34,10 +34,10 @@ func fixExtension(str string) string {
 	return str
 }
 
-// decodeVideoStream processes downloaded video stream and
-// decodeVideoStream calls helper functions and writes the
+// DecodeVideoStream processes downloaded video stream and
+// DecodeVideoStream calls helper functions and writes the
 // output in the required format
-func decodeVideoStream(videoUrl, format string) error {
+func DecodeVideoStream(videoUrl, format string) error {
 
 	// Get video data
 	res, err := goutubedl.New(context.Background(), videoUrl, goutubedl.Options{})
