@@ -1,4 +1,4 @@
-name: Build
+name: CI
 
 on: [push, pull_request]
 
@@ -8,15 +8,17 @@ jobs:
     name: Setup, Build, Test
     strategy:
       matrix:
-        go-version: [1.13.x]
-        platform: [macos-latest]
-    runs-on: ${{ matrix.platform }}
+        go-version: [1.16.x, 1.17.x, 1.18.x]
+        platform: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - name: Setup Go
-      uses: actions/setup-go@v1
+    - name: Install go
+      uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
+    - name: Test
+      run: go test -v -coverage ./...
     - name: Build
-      run: brew install ffmpeg && make build && make vet
+      run: make all
