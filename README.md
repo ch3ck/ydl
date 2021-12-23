@@ -23,7 +23,7 @@ $ make
 ## Install and Run
 
 *NOTE: * release coming soon!
-Once a release is ready, you could just download one of the [binaries]https://github.com/nyanchor/ydl/releases() and run:
+Once a release is ready, you could just download one of the [binaries](https://github.com/nyanchor/ydl/releases) and run:
 
 ```bash
 $ ydl -id url # -id lWEbEtr_Vng
