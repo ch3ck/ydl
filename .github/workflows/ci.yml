@@ -4,8 +4,34 @@ on: [push, pull_request]
 
 
 jobs:
+  build-and-test-rust-lib:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        rust: [nightly]
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        rust-version: ${{ matrix.rust }}
+    - name: Build
+      run: cargo +nightly build --tests --verbose
+    - name: Run tests
+      run: cargo +nightly test --verbose
+  publish-crate-on-new-release:
+    name: "Publish crate on Release"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
+            override: true
+      - uses: katyo/publish-crates@v1
+        with:
+            registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
   setup-build-test:
-    name: Setup, Build, Test
+    name: Setup, Build, Test go source
     strategy:
       matrix:
         go-version: [1.16.x, 1.17.x, 1.18.x]
