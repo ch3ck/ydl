@@ -1,70 +1,43 @@
-# youtube-dl
+# ydl
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ch3ck/youtube-dl/Build?style=for-the-badge)](https://github.com/ch3ck/youtube-dl/actions)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/ch3ck/youtube-dl)
-[![GitHub license](https://img.shields.io/github/license/ch3ck/youtube-dl?style=for-the-badge)](https://github.com/ch3ck/youtube-dl/blob/master/LICENSE)
+[![Build](https://github.com/ch3ck/youtube-dl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/ch3ck/youtube-dl/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/ch3ck/youtube-dl/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/ch3ck/youtube-dl/actions/workflows/codeql-analysis.yml))
+[![forthebadge](https://forthebadge.com/images/badges/contains-technical-debt.svg)](https://forthebadge.com)
 
-`youtube-dl` is a simple youtube video downloader and can also download multiple videos concurrently.
-Downloaded videos could be converted to `flv` or `mp3` formats.
+`ydl` is a simple youtube video downloader.
 
 
-## Build
+## Build and Test
+
+## Pre-requisites
+
+1. Install [rust nightly](https://rust-lang.github.io/rustup/concepts/channels.html)
+2. Install the [go]https://go.dev/doc/install()
 
 ```bash
-$ git clone https://github.com/Ch3ck/youtube-dl
-$ cd youtube-dl
+$ git clone https://github.com/Ch3ck/ydl
+$ cd ydl
 $ make
 ```
 
+## Install and Run
 
-## Usage
-
-To install youtube-dl
-
-```console
-$ go get github.com/Ch3ck/youtube-dl
-```
-
-To run download:
-
-```console
-youtube-dl -h
-youtube-dl - Simple youtube video/audio downloader
-
-Usage: youtube-dl [OPTIONS] [ARGS]
-
-Flags:
-  -bitrate        Audio Bitrate (default 123)
-  -format         File Format(mp3, webm, flv)
-  -id             Youtube Video ID
-  -path           Output Path (default ".")
-  -version        print version and exit
-  -h              Help page
-```
-
-### Example
+*NOTE: * release coming soon!
+Once a release is ready, you could just download one of the [binaries]https://github.com/nyanchor/ydl/releases() and run:
 
 ```bash
-$ ./youtube-dl -format mp3 -id lWEbEtr_Vng
+$ ydl -id url # -id lWEbEtr_Vng
 ```
 
-## Roadmap
-
-* Download youtube video with video id or link and converts to flv or mp3.
-* Support HD Video download.
-* Concurrent downloads.
-* Web App(PWA, Basic JS Web UI).
-
-
-## Contributing
-
-Follow the basic instruction in the [CONTRIBUTING](CONTRIBUTING.md) file.
 
 ## Licence
 
-`youtube-dl` is licensed under [The MIT Licence](LICENSE.md).
+`ydl` is licensed under [The MIT Licence](LICENSE.md).
 
 
-## Support
+## License
+The scripts and documentation in this project are released under the [MIT License](LICENSE.md)
 
-This project was created and is maintained by [Nyah Check](https://twitter.com/ch3ck_)
+
+## Author
+- [Nyah Check](https://nyah.dev)

@@ -1,28 +1,28 @@
-// main program entry
 package main
+
+// #cgo LDFLAGS: ./pkg/libydl.a -ldl
+// #include "./pkg/download.h"
+import "C"
 
 import (
 	"flag"
-	"fmt"
-	_ "net/http/pprof"
+	"log"
 	"os"
-	"runtime"
-	"runtime/pprof"
 	"strings"
-	"sync"
-
-	"github.com/sirupsen/logrus"
 )
 
 const (
 
 	// help Banner
 	BANNER = `` +
-		`youtube-dl - Simple youtube video/audio DownloadStreams` + "\n\n" +
-		`Usage: youtube-dl [OPTIONS] [ARGS]` + "\n"
+		`ydl - simple youtube downloader` + "\n\n" +
+		`Usage: [OPTIONS] [ARGS]` + "\n" +
+		"\t" + `ydl -id video url or id` + "\n" +
+		"\t" + `ydl -path download path (defaults to '.')` + "\n" +
+		"\t" + `Example: ydl -id https://www.youtube.com/watch?v=lWEbEtr_Vng` + "\n\n\n"
 
 	// current version
-	VERSION = "v0.2"
+	VERSION = "v1.0"
 
 	// default maximum concurrent downloads
 	MAXDOWNLOADS = 5
@@ -37,35 +37,19 @@ var (
 	bitrate uint
 )
 
-var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
-
 func init() {
 	// parse flags
 	flag.StringVar(&ids, "id", "", "video url or video id; separate multiple ids with a comma.")
-	flag.StringVar(&format, "format", "flv", "download file format(mp3 or flv)")
 	flag.StringVar(&path, "path", ".", "download file path")
-	flag.BoolVar(&version, "version", false, "print version number")
-	flag.UintVar(&bitrate, "bitrate", 192, "audio bitrate")
 
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, fmt.Sprintf("%s \t %s", BANNER, VERSION))
+		log.Fatalf("%s \t %s", BANNER, VERSION)
 		flag.PrintDefaults()
 	}
 }
 
 func main() {
 	flag.Parse()
-
-	if *cpuprofile != "" {
-		f, err := os.Create(*cpuprofile)
-		if err != nil {
-			logrus.Fatalf("%v", err)
-		}
-		pprof.StartCPUProfile(f)
-		defer pprof.StopCPUProfile()
-	}
-	runtime.SetBlockProfileRate(20)
-
 	args := os.Args
 	if len(args) < 2 {
 		usageAndExit(BANNER, 2)
@@ -74,8 +58,13 @@ func main() {
 		path, _ = os.Getwd()
 	}
 
+	// parse urls
 	urls := parseUrls(ids)
-	beginDownload(urls)
+
+	// start download
+	if err := concurrentDownload(MAXDOWNLOADS, format, urls); err != nil {
+		log.Fatalf("Unable to download video(s): %v with errors => %v", urls, err)
+	}
 }
 
 // parseUrls for video download
@@ -87,46 +76,24 @@ func parseUrls(urls string) []string {
 	}
 }
 
-func beginDownload(urls []string) {
-	if len(urls) < 2 {
-		if err := decodeVideoStream(urls[0], format); err != nil {
-			logrus.Errorf("Unable to beginDownload: %v", err)
-		}
-	} else {
-		if err := concurrentDownload(MAXDOWNLOADS, format, urls); err != nil {
-			logrus.Errorf("Unable to concurrently download videos: %v with errors => %v", urls, err)
-		}
-	}
-}
-
 //DownloadStreams download a batch of elements asynchronously
-func concurrentDownload(maxOperations int, format string, urls []string) <-chan error {
-
-	var wg sync.WaitGroup
-	wg.Add(len(urls))
-
-	ch := make(chan error, maxOperations)
+func concurrentDownload(maxOperations int, format string, urls []string) error {
 	for _, url := range urls {
+		// download video
 		go func(url string) {
-			defer wg.Done()
-			ch <- decodeVideoStream(url, format)
+			cUrl := C.CString(url)
+			cPath := C.CString(path)
+
+			C.download(cUrl, cPath)
 		}(url)
 	}
-
-	go func() {
-		wg.Wait()
-		close(ch)
-	}()
-
-	return ch
+	return nil
 }
 
 func usageAndExit(message string, exitCode int) {
 	if message != "" {
-		fmt.Fprintf(os.Stderr, message)
-		fmt.Fprintf(os.Stderr, "\n\n")
+		log.Fatalf(message)
 	}
 	flag.Usage()
-	fmt.Fprintf(os.Stderr, "\n")
 	os.Exit(exitCode)
 }
