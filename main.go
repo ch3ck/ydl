@@ -5,95 +5,135 @@ package main
 import "C"
 
 import (
-	"flag"
+	"errors"
+	"fmt"
+	"io"
 	"log"
 	"os"
+	"path/filepath"
+	"sort"
 	"strings"
+	"unicode"
+
+	"github.com/kkdai/youtube/v2"
+	"github.com/urfave/cli/v2"
 )
 
 const (
-
-	// help Banner
-	BANNER = `` +
-		`ydl - simple youtube downloader` + "\n\n" +
-		`Usage: [OPTIONS] [ARGS]` + "\n" +
-		"\t" + `ydl -id video url or id` + "\n" +
-		"\t" + `ydl -path download path (defaults to '.')` + "\n" +
-		"\t" + `Example: ydl -id https://www.youtube.com/watch?v=lWEbEtr_Vng` + "\n\n\n"
-
-	// current version
-	VERSION = "v1.0"
-
-	// default maximum concurrent downloads
-	MAXDOWNLOADS = 5
+	VERSION = "v0.1.0"                                      // current version
+	URL     = "https://www.youtube.com/watch?v=lWEbEtr_Vng" // default video url
+	PATH    = "."                                           // default download path
 )
-
-var (
-	// Command line flags
-	ids     string
-	version bool
-	format  string
-	path    string
-	bitrate uint
-)
-
-func init() {
-	// parse flags
-	flag.StringVar(&ids, "id", "", "video url or video id; separate multiple ids with a comma.")
-	flag.StringVar(&path, "path", ".", "download file path")
-
-	flag.Usage = func() {
-		log.Fatalf("%s \t %s", BANNER, VERSION)
-		flag.PrintDefaults()
-	}
-}
 
 func main() {
-	flag.Parse()
-	args := os.Args
-	if len(args) < 2 {
-		usageAndExit(BANNER, 2)
-	}
-	if path == "" {
-		path, _ = os.Getwd()
-	}
+	app := &cli.App{
+		Name:                 "ydl",
+		Usage:                "simple youtube downloader",
+		EnableBashCompletion: true,
+		Version:              VERSION,
+		Authors: []*cli.Author{
+			&cli.Author{
+				Name:  "Nyah Check",
+				Email: "hello@nyah.dev",
+			},
+		},
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:     "id",
+				Aliases:  []string{"i"},
+				Value:    URL,
+				Usage:    "Youtube video url or link",
+				Required: true,
+			},
+			&cli.StringFlag{
+				Name:    "path",
+				Value:   PATH,
+				Aliases: []string{"p"},
+				Usage:   "Destination for downloaded `FILE`",
+			},
+		},
+		Action: func(c *cli.Context) error {
+			// process args here
+			cli.DefaultAppComplete(c)
+			cli.HandleExitCoder(errors.New("Invalid `ydl` command"))
+			cli.ShowAppHelp(c)
+			cli.ShowCompletions(c)
+			cli.ShowVersion(c)
 
-	// parse urls
-	urls := parseUrls(ids)
+			// get app names
+			fmt.Printf("Args: %#v\n", c.Args())
+			fmt.Printf("%#v\n", c.String("id"))
+			fmt.Printf("%#v\n", c.String("path"))
 
-	// start download
-	if err := concurrentDownload(MAXDOWNLOADS, format, urls); err != nil {
-		log.Fatalf("Unable to download video(s): %v with errors => %v", urls, err)
+			// parse urls
+			url := c.String("id")
+			path := c.String("path")
+
+			// download files with go library
+			return downloadVideo(url, path)
+
+			// use rust library instead
+			// return rsDownloadVideo(url, path)
+		},
+	}
+	sort.Sort(cli.FlagsByName(app.Flags))
+
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatalf("Unable to download video(s) with error => %v", err)
 	}
 }
 
-// parseUrls for video download
-func parseUrls(urls string) []string {
-	if ids == "" {
-		return []string{os.Args[1]}
-	} else {
-		return strings.Split(ids, ",")
-	}
+// removeWhiteSpace removes white spaces from string
+// removeWhiteSpace returns a filename without whitespaces
+func removeWhiteSpace(str string) string {
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return -1
+		}
+		return r
+	}, str)
 }
 
-//DownloadStreams download a batch of elements asynchronously
-func concurrentDownload(maxOperations int, format string, urls []string) error {
-	for _, url := range urls {
-		// download video
-		go func(url string) {
-			cUrl := C.CString(url)
-			cPath := C.CString(path)
+// downloadVideo downloads a video from a youtube url
+// returns error if error occurs
+func downloadVideo(url string, path string) error {
+	client := youtube.Client{}
 
-			C.download(cUrl, cPath)
-		}(url)
+	videoInfo, err := client.GetVideo(url)
+	if err != nil {
+		return err
 	}
+
+	audioFormat := videoInfo.Formats.WithAudioChannels()
+	videoStream, _, err := client.GetStream(videoInfo, &audioFormat[0])
+	if err != nil {
+		return err
+	}
+
+	fileName := fmt.Sprintf("%s.mp4", removeWhiteSpace(videoInfo.Title))
+	fmt.Printf("\nFileName: %s", fileName)
+	filePath := filepath.Join(path, fileName)
+	videoFile, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer videoFile.Close()
+
+	_, err = io.Copy(videoFile, videoStream)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Successfully downloaded: %v", url)
 	return nil
 }
 
-func usageAndExit(message string, exitCode int) {
-	if message != "" {
-		log.Fatalf(message)
-	}
-	flag.Usage()
-	os.Exit(exitCode)
+// rsDownloadVideo downloads video using rust library
+func rsDownloadVideo(url string, path string) error {
+	cUrl := C.CString(url)
+	cPath := C.CString(path)
+	C.download(cUrl, cPath)
+
+	return nil
 }
