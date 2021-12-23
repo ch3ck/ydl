@@ -1,22 +1,40 @@
-name: Build
+name: CI
 
 on: [push, pull_request]
 
 
 jobs:
-  setup-build-test:
-    name: Setup, Build, Test
+  build-and-test-rust-library:
+    name: Build and test rust library
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source
+        uses: actions/checkout@v2
+      - name: install latest nightly
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          components: rustfmt, clippy
+      - name: build and test
+        working-directory: ./pkg/download
+        run: |
+          cargo build --tests --verbose && cargo test --verbose
+  build-and-test-go-module:
+    name: Build and test go source
     strategy:
       matrix:
-        go-version: [1.13.x]
-        platform: [macos-latest]
-    runs-on: ${{ matrix.platform }}
+        go-version: [1.16.x, 1.17.x, 1.18.x]
+        platform: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - name: Setup Go
-      uses: actions/setup-go@v1
+    - name: Install go
+      uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
-      uses: actions/checkout@v1
+      uses: actions/checkout@v2
+    - name: Test
+      run: go test -v -coverage ./...
     - name: Build
-      run: brew install ffmpeg && make build && make vet
+      run: make

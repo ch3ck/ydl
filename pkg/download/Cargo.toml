@@ -1,0 +1,29 @@
+[package]
+name            = "ydl"
+description     = "download youtube videos to path"
+version         = "0.1.0"
+authors         = ["Nyah Check <hello@nyah.dev>"]
+license         = "MIT"
+homepage        = "https://github.com/ch3ck"
+repository      = "https://github.com/ch3ck/ydl"
+readme          = "README.md"
+categories      = ["web-programming"]
+keywords        = [ "rust"]
+edition         = "2018"
+documentation   = "https://docs.rs/ydl"
+
+
+[lib]
+crate-type = ["staticlib"]
+
+[profile.release]
+debug               = true
+overflow-checks     = true
+panic               = "abort"
+
+[dependencies]
+clippy      = "0.0.302"
+env_logger  = "0.9.0"
+log         = "0.4.14"
+rustube     = "0.3.6"
+tokio       = { version = "1.15.0", features = ["macros", "io-util", "sync", "rt-multi-thread"] }
