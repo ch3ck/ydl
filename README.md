@@ -17,7 +17,7 @@
 
 ### Install and Run
 
-![image](https://user-images.githubusercontent.com/96080444/147298934-6c64e3b3-1e4d-4444-9ff0-461e80a68862.png)
+![image](https://user-images.githubusercontent.com/96080444/147299032-3459f700-c3b7-448e-83c3-ff2ba27a62f9.png)
 
 
 ## License
@@ -25,4 +25,7 @@ The scripts and documentation in this project are released under the [MIT Licens
 
 
 ## Author
+
+**NOTE** Will stop maintaining this package soon, the *Youtube API* is highly unreliable(its a rat race).
+
 - [Nyah Check](https://nyah.dev)
