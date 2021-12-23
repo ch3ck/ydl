@@ -10,10 +10,10 @@ ENV GO111MODULE=on
 WORKDIR /app
 RUN echo "Build container"
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o /youtube-dl .
+RUN CGO_ENABLED=0 GOOS=linux go build -o /ydl .
 
 
 # Runtime container
 FROM scratch
-COPY --from=go-base /youtube-dl /youtube-dl
-ENTRYPOINT ["/youtube-dl"]
+COPY --from=go-base /ydl /ydl
+ENTRYPOINT ["/ydl"]

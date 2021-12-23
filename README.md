@@ -1,37 +1,36 @@
-# youtube-dl
+# ydl
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ch3ck/youtube-dl/Build?style=for-the-badge)](https://github.com/ch3ck/youtube-dl/actions)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/ch3ck/youtube-dl)
-[![GitHub license](https://img.shields.io/github/license/ch3ck/youtube-dl?style=for-the-badge)](https://github.com/ch3ck/youtube-dl/blob/master/LICENSE)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ch3ck/ydl/Build?style=for-the-badge)](https://github.com/ch3ck/ydl/actions)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/ch3ck/ydl)
+[![GitHub license](https://img.shields.io/github/license/ch3ck/ydl?style=for-the-badge)](https://github.com/ch3ck/ydl/blob/master/LICENSE)
 
-`youtube-dl` is a simple youtube video downloader and can also download multiple videos concurrently.
-Downloaded videos could be converted to `flv` or `mp3` formats.
+`ydl` is a simple youtube video downloader.
 
 
 ## Build
 
 ```bash
-$ git clone https://github.com/Ch3ck/youtube-dl
-$ cd youtube-dl
+$ git clone https://github.com/Ch3ck/ydl
+$ cd ydl
 $ make
 ```
 
 
 ## Usage
 
-To install youtube-dl
+To install ydl
 
 ```console
-$ go get github.com/Ch3ck/youtube-dl
+$ go get github.com/ch3ck/ydl
 ```
 
 To run download:
 
 ```console
-youtube-dl -h
-youtube-dl - Simple youtube video/audio downloader
+ydl -h
+ydl - Simple youtube video/audio downloader
 
-Usage: youtube-dl [OPTIONS] [ARGS]
+Usage: ydl [OPTIONS] [ARGS]
 
 Flags:
   -bitrate        Audio Bitrate (default 123)
@@ -45,7 +44,7 @@ Flags:
 ### Example
 
 ```bash
-$ ./youtube-dl -format mp3 -id lWEbEtr_Vng
+$ ./ydl -format mp3 -id lWEbEtr_Vng
 ```
 
 ## Roadmap
@@ -62,7 +61,7 @@ Follow the basic instruction in the [CONTRIBUTING](CONTRIBUTING.md) file.
 
 ## Licence
 
-`youtube-dl` is licensed under [The MIT Licence](LICENSE.md).
+`ydl` is licensed under [The MIT Licence](LICENSE.md).
 
 
 ## Support

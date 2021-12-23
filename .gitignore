@@ -19,7 +19,7 @@
 
 ## Compiled binaries
 ytd
-youtube-dl
+ydl
 
 
 # Test binary, built with `go test -c`
