@@ -1,10 +1,3 @@
-module youtube-dl
+module ydl
 
 go 1.17
-
-require (
-	github.com/sirupsen/logrus v1.8.1
-	github.com/wader/goutubedl v0.0.0-20211221155015-039073da1ac8
-)
-
-require golang.org/x/sys v0.0.0-20191026070338-33540a1f6037 // indirect

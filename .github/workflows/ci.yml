@@ -37,4 +37,4 @@ jobs:
     - name: Test
       run: go test -v -coverage ./...
     - name: Build
-      run: make all
+      run: make

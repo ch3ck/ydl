@@ -1,45 +1,26 @@
-# Setup package name variables
-NAME := ytd
-PKG := github.com/ch3ck/$(NAME)
-PREFIX?=$(shell pwd)
-BUILDTAGS=
-version=v1.1
+.PHONY: build-all
+build-all: build-static
 
-.PHONY: clean all fmt vet build test install static
-.DEFAULT: default
+.PHONY: run-all
+run-all: run-static
 
-all: clean fmt vet build test install
+.PHONY: build-static
+build-static:
+	rustup toolchain install nightly
+	cd pkg/download && cargo +nightly build --release
+	cp pkg/download/target/release/libydl.a pkg/
+	go build -v ./...
 
-build: clean fmt
-	@echo "+ $@"
-	CGO_ENABLED=1 go build -tags "$(BUILDTAGS) cgo" .
+.PHONY: run-static
+run-static:
+	RUST_LOG=trace ./ydl
 
-static:
-	@echo "+ $@"
-	CGO_ENABLED=1 go build -tags "$(BUILDTAGS) cgo static_build" -ldflags "-w -extldflags -static" -o ytd .
+# test rust lib
+.PHONY: test-rs
+test-rs:
+	cd pkg/download && RUST_LOG=trace cargo test -- --nocapture
 
-fmt:
-	@echo "+ $@"
-	@gofmt -s -l -w . | tee /dev/stderr
-
-test:
-	@echo "+ $@"
-	@find . -name \*.mp3 -delete #clean previous test files.
-	@go test -v -tags "$(BUILDTAGS) cgo" $(shell go list)
-	@find . -name \*.mp3 -delete # clean previous test downloads
-	@go test -bench=. $(shell go list)
-
-vet:
-	@echo "+ $@"
-	@go vet $(shell go list | grep -v vendor)
-
+# clean all packages
+.PHONY: clean
 clean:
-	@echo "+ $@"
-	@rm -rf ytd
-	@find . -name \*.mp3 -delete
-	@find . -name \*.flv -delete
-
-install:
-	@echo "+ $@"
-	@docker build -t ch3ck/youtube-dl:$(version) . 
-	@go install .
+	rm -rf main_static pkg/libydl.so pkg/libydl.a pkg/download/target
