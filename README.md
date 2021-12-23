@@ -12,7 +12,7 @@
 ## Pre-requisites
 
 1. Install [rust nightly](https://rust-lang.github.io/rustup/concepts/channels.html)
-2. Install the [go]https://go.dev/doc/install()
+2. Install the [go](https://go.dev/doc/install)
 
 ```bash
 $ git clone https://github.com/Ch3ck/ydl
