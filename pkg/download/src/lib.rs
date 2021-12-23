@@ -46,6 +46,6 @@ pub mod tests {
         let fp = String::from("~/Downloads");
         download(url.as_str(), fp.as_str())
             .await
-            .expect("expect an OK(_) response");
+            .unwrap_err();
     }
 }
