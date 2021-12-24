@@ -12,7 +12,11 @@ jobs:
   run-security-audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions-rs/audit-check@v1
         with:
+          path: ./pkg/download
           token: ${{ secrets.GITHUB_TOKEN }}

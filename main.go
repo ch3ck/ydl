@@ -70,10 +70,10 @@ func main() {
 			path := c.String("path")
 
 			// download files with go library
-			return downloadVideo(url, path)
+			// return downloadVideo(url, path)
 
 			// use rust library instead
-			// return rsDownloadVideo(url, path)
+			return rsDownloadVideo(url, path)
 		},
 	}
 	sort.Sort(cli.FlagsByName(app.Flags))
