@@ -27,6 +27,7 @@ jobs:
       - uses: katyo/publish-crates@v1
         with:
             registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+            path: ./pkg/download
   publish-go-package-on-release:
     name: Release go binaries
     runs-on: ubuntu-latest

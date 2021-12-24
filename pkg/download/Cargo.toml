@@ -1,7 +1,7 @@
 [package]
 name            = "ydl"
 description     = "download youtube videos to path"
-version         = "0.1.0"
+version         = "0.1.1"
 authors         = ["Nyah Check <hello@nyah.dev>"]
 license         = "MIT"
 homepage        = "https://github.com/ch3ck"
