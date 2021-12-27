@@ -1,9 +1,5 @@
 package main
 
-// #cgo LDFLAGS: ./pkg/libydl.a -ldl
-// #include "./pkg/download.h"
-import "C"
-
 import (
 	"errors"
 	"fmt"
@@ -129,11 +125,11 @@ func downloadVideo(url string, path string) error {
 	return nil
 }
 
-// rsDownloadVideo downloads video using rust library
-func rsDownloadVideo(url string, path string) error {
-	cUrl := C.CString(url)
-	cPath := C.CString(path)
-	C.download(cUrl, cPath)
+// // rsDownloadVideo downloads video using rust library
+// func rsDownloadVideo(url string, path string) error {
+// 	cUrl := C.CString(url)
+// 	cPath := C.CString(path)
+// 	C.download(cUrl, cPath)
 
-	return nil
-}
+// 	return nil
+// }
