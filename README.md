@@ -1,6 +1,7 @@
 # ydl
 
 [![Build](https://github.com/ch3ck/youtube-dl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/ch3ck/youtube-dl/actions/workflows/ci.yml)
+[![release new binaries](https://github.com/ch3ck/ydl/actions/workflows/release.yml/badge.svg?branch=v0.1.0)](https://github.com/ch3ck/ydl/actions/workflows/release.yml)
 [![CodeQL](https://github.com/ch3ck/youtube-dl/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/ch3ck/youtube-dl/actions/workflows/codeql-analysis.yml))
 [![forthebadge](https://forthebadge.com/images/badges/contains-technical-debt.svg)](https://forthebadge.com)
 
