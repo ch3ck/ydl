@@ -1,7 +1,7 @@
 [package]
-name            = "ydl"
+name            = "nyoutube"
 description     = "download youtube videos to path"
-version         = "0.3.2"
+version         = "0.1.0"
 authors         = ["Nyah Check <hello@nyah.dev>"]
 license         = "MIT"
 homepage        = "https://github.com/ch3ck"
@@ -10,7 +10,7 @@ readme          = "README.md"
 categories      = ["web-programming"]
 keywords        = [ "rust"]
 edition         = "2018"
-documentation   = "https://docs.rs/ydl"
+documentation   = "https://docs.rs/nyoutube"
 
 
 [lib]
