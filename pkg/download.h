@@ -7,7 +7,15 @@
 
 #ifndef DOWNLOAD_H
 #define DOWNLOAD_H
+#include <stdint.h>
+#include <inttypes.h>
 
-char * download(char *url, char *path);
+// result type
+typedef struct {
+  int32_t Ok;
+  int32_t Err;
+} result_t;
+
+extern result_t download(const char *url, const char *path);
 
 #endif

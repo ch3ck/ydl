@@ -1,36 +1,40 @@
 //! -*- mode: rust; -*-
 //!
 //! download - downloads youtube files
+extern crate libc;
 use env_logger;
-use log::{debug, error, info, log_enabled, Level};
-use rustube::{Id, Video};
-use std::ffi;
+use libc::c_char;
+use log::{debug, info};
+use rustube;
+use std::ffi::CStr;
 
 #[no_mangle]
-pub async extern "C" fn download<'a>(
-    url: &'a str,
-    path: &'a str,
+pub async extern "C" fn download(
+    c_url: *const c_char,
+    c_path: *const c_char,
 ) -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
 
+    // convert str in C to rust safely
+    let pre_url = unsafe {
+        assert!(!c_url.is_null());
+        CStr::from_ptr(c_url)
+    };
+
+    let url = pre_url.to_str().unwrap();
+    url.chars().count() as u32;
+
+    // convert str for path from C to rust safely
+    let pre_path = unsafe {
+        assert!(!c_path.is_null());
+        CStr::from_ptr(c_path)
+    };
+    let path = pre_path.to_str().unwrap();
+    path.chars().count() as u32;
+
+    // download video
     info!("video_url: {:?}", url);
-    let id = Id::from_raw(&url)?;
-    info!("video_id: {:?}", id);
-
-    let video = Video::from_id(id.into_owned()).await?;
-    debug!("raw video: {:?}", video);
-
-    let _result = video
-        .streams()
-        .iter()
-        .filter(|stream| {
-            stream.includes_video_track && stream.includes_audio_track
-        })
-        .max_by_key(|stream| stream.quality_label)
-        .unwrap()
-        .download_to_dir(&path)
-        .await
-        .unwrap();
+    let _result = rustube::download_best_quality(url).await?;
     debug!("download status: {:?}", _result);
 
     Ok(())
@@ -39,13 +43,23 @@ pub async extern "C" fn download<'a>(
 #[cfg(test)]
 pub mod tests {
     use super::*;
+    use libc;
+    use std::ffi::CString;
 
     #[tokio::test]
     async fn test_download() {
-        let url = String::from("https://www.youtube.com/watch?v=lWEbEtr_Vng");
-        let fp = String::from("~/Downloads");
-        download(url.as_str(), fp.as_str())
-            .await
-            .unwrap_err();
+        let url = CString::new("https://www.youtube.com/watch?v=lWEbEtr_Vng")
+            .unwrap();
+        url.as_ptr() as *const libc::c_char;
+
+        let fp = CString::new("~/Downloads").unwrap();
+        fp.as_ptr() as *const libc::c_char;
+
+        download(
+            url.as_ptr() as *const libc::c_char,
+            fp.as_ptr() as *const libc::c_char,
+        )
+        .await
+        .unwrap();
     }
 }
