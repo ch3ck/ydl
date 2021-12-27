@@ -18,7 +18,7 @@ jobs:
           components: rustfmt, clippy
       - name: build and test
         working-directory: ./pkg/download
-        run: cargo test --verbose --lib
+        run: cargo test --lib
   build-and-test-go-module:
     name: Build and test go source
     strategy:

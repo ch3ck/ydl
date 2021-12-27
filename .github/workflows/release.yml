@@ -35,5 +35,5 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         goversion: 1.17
-        pre_command: make build-static
+        binary_name: "ydl"
         extra_files: LICENSE README.md

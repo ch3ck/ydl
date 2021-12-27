@@ -1,6 +1,5 @@
 /** -*- mode: C; -*-
  * download.h
- *
  * Copyright (C) 2021 Nyah Check
  *
  **/
@@ -16,6 +15,6 @@ typedef struct {
   int32_t Err;
 } result_t;
 
-extern result_t download(const char *url, const char *path);
+result_t download(const char *url, const char *path);
 
 #endif

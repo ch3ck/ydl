@@ -4,6 +4,11 @@ build-all: build-static
 .PHONY: run-all
 run-all: run-static
 
+
+.PHONY: build
+build:
+	go build -v ./...
+
 .PHONY: build-static
 build-static:
 	rustup toolchain install nightly
@@ -16,8 +21,8 @@ run-static:
 	RUST_LOG=trace ./ydl
 
 # test rust lib
-.PHONY: test-rs
-test-rs:
+.PHONY: test
+test:
 	cd pkg/download && RUST_LOG=trace rustup run nightly cargo test --lib
 
 # clean all packages
