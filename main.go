@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	VERSION = "v0.3.1"                                      // current version
+	VERSION = "v0.3.2"                                      // current version
 	URL     = "https://www.youtube.com/watch?v=lWEbEtr_Vng" // default video url
 	PATH    = "."                                           // default download path
 )
