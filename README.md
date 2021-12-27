@@ -17,8 +17,19 @@
 
 
 ### Install and Run
+![build and run instructions](https://user-images.githubusercontent.com/4006891/147508842-fdc95517-995e-494f-ad8a-f2860eb7a0ce.png)
 
-![image](https://user-images.githubusercontent.com/96080444/147299032-3459f700-c3b7-448e-83c3-ff2ba27a62f9.png)
+
+### Rust bindings
+
+As for the rust package, you can use cgo to compile and rust, but you'll have to add the following lines to the `main.go`
+
+![building with rust bindings](https://user-images.githubusercontent.com/4006891/147509114-d49f733f-db91-459e-b860-6f932f19e8d0.png)
+
+then run
+```bash
+$ make build-static
+```
 
 
 ## License
