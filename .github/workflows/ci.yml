@@ -18,8 +18,7 @@ jobs:
           components: rustfmt, clippy
       - name: build and test
         working-directory: ./pkg/download
-        run: |
-          cargo build --tests --verbose && cargo test --verbose
+        run: cargo test --verbose --lib
   build-and-test-go-module:
     name: Build and test go source
     strategy:
@@ -34,7 +33,6 @@ jobs:
         go-version: ${{ matrix.go-version }}
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Test
-      run: go test -v -coverage ./...
-    - name: Build
-      run: make
+    - name: test build
+      run: go build -v ./...
+

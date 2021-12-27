@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	VERSION = "v0.1.0"                                      // current version
+	VERSION = "v0.2.0"                                      // current version
 	URL     = "https://www.youtube.com/watch?v=lWEbEtr_Vng" // default video url
 	PATH    = "."                                           // default download path
 )
@@ -55,15 +55,15 @@ func main() {
 		Action: func(c *cli.Context) error {
 			// process args here
 			cli.DefaultAppComplete(c)
-			cli.HandleExitCoder(errors.New("Invalid `ydl` command"))
+			cli.HandleExitCoder(errors.New("invalid `ydl` command"))
 			cli.ShowAppHelp(c)
 			cli.ShowCompletions(c)
 			cli.ShowVersion(c)
 
 			// get app names
 			fmt.Printf("Args: %#v\n", c.Args())
-			fmt.Printf("%#v\n", c.String("id"))
-			fmt.Printf("%#v\n", c.String("path"))
+			fmt.Printf("IDs: %#v\n", c.String("id"))
+			fmt.Printf("Path: %#v\n", c.String("path"))
 
 			// parse urls
 			url := c.String("id")
