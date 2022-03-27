@@ -1,25 +1,25 @@
 [package]
-name            = "nyoutube"
+name            = "ydl-rs"
 description     = "download youtube videos to path"
 version         = "0.1.0"
 authors         = ["Nyah Check <hello@nyah.dev>"]
 license         = "MIT"
-homepage        = "https://github.com/ch3ck"
+homepage        = "https://github.com/ch3ck/ydl/pkg/download"
 repository      = "https://github.com/ch3ck/ydl"
 readme          = "README.md"
 categories      = ["web-programming"]
 keywords        = [ "rust"]
-edition         = "2018"
-documentation   = "https://docs.rs/nyoutube"
+edition         = "2021"
+documentation   = "https://docs.rs/ydl-rs"
 
 
 [lib]
 crate-type = ["staticlib"]
 
 [profile.release]
-debug               = true
-overflow-checks     = true
-panic               = "abort"
+overflow-checks = true
+panic           = "abort"
+strip           = "debuginfo"
 
 [dependencies]
 clippy      = "0.0.302"
