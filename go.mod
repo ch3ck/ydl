@@ -3,7 +3,7 @@ module ydl
 go 1.17
 
 require (
-	github.com/kkdai/youtube/v2 v2.7.6
+	github.com/kkdai/youtube/v2 v2.7.10
 	github.com/urfave/cli/v2 v2.4.0
 )
 
@@ -14,6 +14,5 @@ require (
 	github.com/dop251/goja v0.0.0-20211211112501-fb27c91c26ed // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	golang.org/x/net v0.0.0-20211215060638-4ddde0e984e9 // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
