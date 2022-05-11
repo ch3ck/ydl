@@ -3,7 +3,7 @@ module ydl
 go 1.17
 
 require (
-	github.com/kkdai/youtube/v2 v2.7.11
+	github.com/kkdai/youtube/v2 v2.7.13
 	github.com/urfave/cli/v2 v2.6.0
 )
 
