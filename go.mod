@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/kkdai/youtube/v2 v2.7.13
-	github.com/urfave/cli/v2 v2.6.0
+	github.com/urfave/cli/v2 v2.8.1
 )
 
 require (
@@ -14,5 +14,6 @@ require (
 	github.com/dop251/goja v0.0.0-20220214123719-b09a6bfa842f // indirect
 	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
