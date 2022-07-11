@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/kkdai/youtube/v2 v2.7.15
-	github.com/urfave/cli/v2 v2.10.3
+	github.com/urfave/cli/v2 v2.11.0
 )
 
 require (
